@@ -1,11 +1,75 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
 :root {
   --color-background: #e8d7b5;
   --color-surface: #f6f0e4;
   --color-text: #2f241b;
   --color-accent: #c86b3c;
 
+  --border-radius: 8px;
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
 
-  --border-radius: 8px;
   --max-content-width: 1200px;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: Inter, system-ui, sans-serif;
 }

@@ -1,0 +1,43 @@
+.site-header {
+  background: var(--color-background);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.header-content {
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+
+  padding: 1rem 2rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.brand img {
+  height: 7rem;
+  width: auto;
+}
+
+.nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav a {
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.nav a:hover {
+  opacity: 0.7;
+}

@@ -1,1 +1,3 @@
-<p>project-list works!</p>
+@for (project of projects; track project.id) {
+  <div>{{ project.name }}</div>
+}

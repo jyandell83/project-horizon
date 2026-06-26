@@ -8,9 +8,22 @@
     </a>
 
     <nav class="nav">
-      <a class="nav-link active" routerLink="/">Home</a>
-      <a class="nav-link" routerLink="/projects">Projects</a>
-      <a class="nav-link" routerLink="/sessions">Sessions</a>
+      <a
+        class="nav-link"
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Home
+      </a>
+
+      <a class="nav-link" routerLink="/projects" routerLinkActive="active">
+        Projects
+      </a>
+
+      <a class="nav-link" routerLink="/sessions" routerLinkActive="active">
+        Sessions
+      </a>
     </nav>
   </div>
 </header>

@@ -38,4 +38,54 @@ button {
   border: none;
   cursor: pointer;
   font-weight: 700;
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+  border: 1px solid var(--color-tertiary);
+}
+
+.button-primary {
+  background: var(--color-primary);
+  color: var(--color-surface);
+
+  border: none;
+  border-radius: var(--border-radius);
+
+  padding: 0.75rem 1.5rem;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+.button-primary:hover {
+  filter: brightness(0.95);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.button-primary:active {
+  transform: translateY(1px);
+}
+.button-secondary {
+  background: transparent;
+  color: var(--color-secondary);
+
+  border: 1px solid var(--color-secondary);
+
+  border-radius: var(--border-radius);
+
+  padding: 0.75rem 1.5rem;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.button-secondary:hover {
+  background: rgba(79, 157, 157, 0.08);
 }

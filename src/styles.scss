@@ -60,7 +60,15 @@ table {
   --color-background: #e8d7b5;
   --color-surface: #f6f0e4;
   --color-text: #2f241b;
-  --color-accent: #c86b3c;
+  --color-primary: #d18473;
+  --color-secondary: #4f9d9d;
+  --color-tertiary: #8b908a;
+
+  --color-nav-background: #e2cfab;
+  --color-nav-text: var(--color-text);
+  --color-nav-text-hover: var(--color-primary);
+  --color-nav-active: var(--color-secondary);
+  --color-nav-border: rgba(47, 36, 27, 0.12);
 
   --border-radius: 8px;
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);

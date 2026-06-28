@@ -1,3 +1,19 @@
 @for (project of projects; track project.id) {
-  <div>{{ project.name }}</div>
+  <article class="project-card">
+    <div class="project-card__header">
+      <div>
+        <h3>{{ project.name }}</h3>
+        <p>{{ project.location }}</p>
+      </div>
+
+      <span class="project-card__grade">{{ project.grade }}</span>
+    </div>
+
+    <p class="project-card__notes">{{ project.notes }}</p>
+
+    <div class="project-card__meta">
+      <span>{{ project.attempts }} attempts</span>
+      <span>{{ project.status }}</span>
+    </div>
+  </article>
 }

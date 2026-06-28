@@ -1,0 +1,59 @@
+.project-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  padding: 1.5rem;
+
+  background: var(--color-surface);
+  border: 1px solid rgba(47, 36, 27, 0.1);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+
+  margin: 1rem;
+}
+
+.project-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  p {
+    margin: 0.35rem 0 0;
+    font-size: 0.95rem;
+  }
+}
+
+.project-card__grade {
+  padding: 0.35rem 0.75rem;
+
+  border-radius: 999px;
+
+  background: var(--color-tertiary);
+  color: white;
+
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.project-card__notes {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.project-card__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding-top: 1rem;
+  border-top: 1px solid rgba(47, 36, 27, 0.08);
+
+  font-size: 0.9rem;
+}

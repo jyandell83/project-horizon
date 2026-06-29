@@ -1,3 +1,5 @@
+import { ClimbingSession } from '../models/session';
+
 export const SESSIONS: ClimbingSession[] = [
   {
     id: 1,

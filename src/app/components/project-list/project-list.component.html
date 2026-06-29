@@ -8,8 +8,9 @@
 
       <span class="project-card__grade">{{ project.grade }}</span>
     </div>
-
-    <p class="project-card__notes">{{ project.notes }}</p>
+    @for (note of project.notes; track note.id) {
+      <p class="project-card__notes">{{ note.body }}</p>
+    }
 
     <div class="project-card__meta">
       <span>{{ project.attempts }} attempts</span>

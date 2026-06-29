@@ -6,15 +6,17 @@
       <header class="session-card__header">
         <div>
           <h2>{{ session.location }}</h2>
-          <p>{{ session.date }}</p>
+          <p>{{ session.date | date }}</p>
         </div>
 
         <span>{{ session.environment }}</span>
       </header>
 
       <div class="session-card__times">
-        <p><strong>Start:</strong> {{ session.startTime }}</p>
-        <p><strong>End:</strong> {{ session.endTime }}</p>
+        <p>
+          <strong>Start:</strong> {{ session.startTime | date: "shortTime" }}
+        </p>
+        <p><strong>End:</strong> {{ session.endTime | date: "shortTime" }}</p>
       </div>
 
       <h3>Session Phases</h3>
@@ -23,7 +25,10 @@
         @for (phase of session.phases; track phase.id) {
           <li>
             <strong>{{ phase.type }}</strong>
-            <div>{{ phase.startTime }} - {{ phase.endTime }}</div>
+            <div>
+              {{ phase.startTime | date: "shortTime" }} -
+              {{ phase.endTime | date: "shortTime" }}
+            </div>
           </li>
         }
       </ul>

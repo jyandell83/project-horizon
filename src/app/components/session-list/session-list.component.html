@@ -1,1 +1,36 @@
-<p>session-list works!</p>
+<section class="sessions-page">
+  <h1>Sessions</h1>
+
+  @for (session of sessions; track session.id) {
+    <article class="session-card">
+      <header class="session-card__header">
+        <div>
+          <h2>{{ session.location }}</h2>
+          <p>{{ session.date }}</p>
+        </div>
+
+        <span>{{ session.environment }}</span>
+      </header>
+
+      <div class="session-card__times">
+        <p><strong>Start:</strong> {{ session.startTime }}</p>
+        <p><strong>End:</strong> {{ session.endTime }}</p>
+      </div>
+
+      <h3>Session Phases</h3>
+
+      <ul class="session-phases">
+        @for (phase of session.phases; track phase.id) {
+          <li>
+            <strong>{{ phase.type }}</strong>
+            <div>{{ phase.startTime }} - {{ phase.endTime }}</div>
+          </li>
+        }
+      </ul>
+
+      <p class="session-notes">
+        {{ session.notes }}
+      </p>
+    </article>
+  }
+</section>

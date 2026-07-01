@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 
-import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormControl } from '@angular/forms';
+
+import { ProjectsService } from '../../services/projects.service';
 
 import { Project } from '../../models/project';
 
@@ -14,29 +16,30 @@ import { Router } from '@angular/router';
   styleUrl: './project-form-page.component.scss',
 })
 export class ProjectFormPageComponent {
-  constructor(private router: Router) {}
-
+  private router = inject(Router);
   private fb = inject(FormBuilder);
+  private projectsService = inject(ProjectsService);
 
   projectForm = this.fb.nonNullable.group({
     name: [''],
     grade: [''],
     location: [''],
-    environment: ['gym' as 'gym' | 'outdoor'],
+    environment: new FormControl<'gym' | 'outdoor'>('gym', {
+      nonNullable: true,
+    }),
   });
 
   saveProject() {
-    const newProject: Project = {
-      id: Date.now(),
-      name: this.projectForm.value.name!,
-      grade: this.projectForm.value.grade!,
-      location: this.projectForm.value.location!,
-      environment: this.projectForm.value.environment!,
+    const formValue = this.projectForm.getRawValue();
+    this.projectsService.addProject({
+      name: formValue.name,
+      grade: formValue.grade,
+      location: formValue.location,
+      environment: formValue.environment,
       status: 'active',
       attempts: 0,
       notes: [],
-    };
-    console.log(newProject);
+    });
 
     this.router.navigate(['/projects']);
   }

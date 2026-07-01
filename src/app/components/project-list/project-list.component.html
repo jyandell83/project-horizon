@@ -16,5 +16,8 @@
       <span>{{ project.attempts }} attempts</span>
       <span>{{ project.status }}</span>
     </div>
+    <button class="button-secondary" (click)="deleteProject(project.id)">
+      Delete Project
+    </button>
   </article>
 }

@@ -17,6 +17,7 @@ export const routes: Routes = [
     path: 'projects/new',
     component: ProjectFormPageComponent,
   },
+  { path: 'projects/:id/edit', component: ProjectFormPageComponent },
   {
     path: 'sessions',
     component: SessionsPageComponent,

@@ -19,5 +19,11 @@
     <button class="button-secondary" (click)="deleteProject(project.id)">
       Delete Project
     </button>
+    <button
+      class="button-secondary"
+      [routerLink]="['/projects', project.id, 'edit']"
+    >
+      Edit
+    </button>
   </article>
 }

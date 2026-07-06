@@ -56,6 +56,10 @@ table {
   border-spacing: 0;
 }
 
+main {
+  padding: 1rem;
+}
+
 :root {
   --color-background: #e6ddc9;
 
@@ -64,6 +68,7 @@ table {
   --color-primary: #6f7f5c;
   --color-secondary: #4f9d9d;
   --color-tertiary: #8b908a;
+  --color-danger: #c96a3d;
 
   --color-nav-background: #e2cfab;
   --color-nav-text: var(--color-text);
@@ -84,13 +89,13 @@ body {
 }
 
 h1 {
-  font-size: clamp(3rem, 8vw, 6rem);
+  font-size: clamp(2rem, 3vw, 2.75rem);
   margin: 0.5rem 0 1rem;
 }
 
 p {
-  font-size: 1.15rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1;
 }
 
 button {
@@ -150,4 +155,33 @@ button {
 
 .button-secondary:hover {
   background: rgba(79, 157, 157, 0.08);
+}
+
+.button-danger {
+  background: var(--color-danger);
+  color: var(--color-surface);
+  border: none;
+}
+
+.button-danger:hover {
+  background: #b85d34;
+}
+
+.button-danger:active {
+  background: #a7522c;
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+
+  button {
+    margin-left: auto;
+    margin-top: 0;
+  }
 }

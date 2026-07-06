@@ -36,6 +36,14 @@ export class ProjectsService {
     }
   }
 
+  updateAttempts(id: number, change: number): void {
+    const project = this.projects.find((p) => p.id === id);
+
+    if (!project) return;
+
+    project.attempts = Math.max(0, project.attempts + change);
+  }
+
   deleteProject(id: number): void {
     this.projects = this.projects.filter((project) => project.id !== id);
   }

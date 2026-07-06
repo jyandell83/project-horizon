@@ -17,6 +17,10 @@ export class ProjectListComponent {
 
   projects = this.projectsService.getProjects();
 
+  updateAttempts(id: number, change: number): void {
+    this.projectsService.updateAttempts(id, change);
+  }
+
   deleteProject(id: number): void {
     this.projectsService.deleteProject(id);
     this.projects = this.projectsService.getProjects();

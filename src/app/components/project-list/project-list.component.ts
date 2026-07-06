@@ -16,6 +16,7 @@ export class ProjectListComponent {
   private projectsService = inject(ProjectsService);
 
   projects = this.projectsService.getProjects();
+  editingNoteProjectId: number | null = null;
 
   updateAttempts(id: number, change: number): void {
     this.projectsService.updateAttempts(id, change);
@@ -24,5 +25,12 @@ export class ProjectListComponent {
   deleteProject(id: number): void {
     this.projectsService.deleteProject(id);
     this.projects = this.projectsService.getProjects();
+  }
+
+  showNoteEditor(projectId: number): void {
+    this.editingNoteProjectId = projectId;
+  }
+  cancelNote(): void {
+    this.editingNoteProjectId = null;
   }
 }

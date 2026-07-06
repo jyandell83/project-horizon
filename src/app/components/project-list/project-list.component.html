@@ -11,12 +11,24 @@
     @for (note of project.notes; track note.id) {
       <p class="project-card__notes">{{ note.body }}</p>
     }
+    @if (editingNoteProjectId !== project.id) {
+      <button (click)="showNoteEditor(project.id)">Add Note</button>
+    } @else {
+      <textarea></textarea>
+
+      <button>Save</button>
+      <button (click)="cancelNote()">Cancel</button>
+    }
 
     <div class="project-card__meta">
       <span>
         <span>{{ project.attempts }} attempts</span>
-        <button (click)="updateAttempts(project.id, 1)">+</button>
-        <button (click)="updateAttempts(project.id, -1)">-</button>
+        <button class="button-primary" (click)="updateAttempts(project.id, 1)">
+          +
+        </button>
+        <button class="button-primary" (click)="updateAttempts(project.id, -1)">
+          -
+        </button>
       </span>
 
       <span>{{ project.status }}</span>

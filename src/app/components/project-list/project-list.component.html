@@ -14,9 +14,9 @@
     @if (editingNoteProjectId !== project.id) {
       <button (click)="showNoteEditor(project.id)">Add Note</button>
     } @else {
-      <textarea></textarea>
+      <textarea [(ngModel)]="noteText" placeholder="Add a note..."></textarea>
 
-      <button>Save</button>
+      <button (click)="saveNote(project)">Save</button>
       <button (click)="cancelNote()">Cancel</button>
     }
 

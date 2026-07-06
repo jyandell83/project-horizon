@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Project } from '../models/project';
+import { ProjectNote } from '../models/project';
 
 import { PROJECTS } from '../data/dummy-projects';
 
@@ -42,6 +43,23 @@ export class ProjectsService {
     if (!project) return;
 
     project.attempts = Math.max(0, project.attempts + change);
+  }
+
+  addNote(projectId: number, body: string): void {
+    const project = this.projects.find((project) => project.id === projectId);
+
+    if (!project) return;
+
+    const newNote: ProjectNote = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      body: body.trim(),
+    };
+
+    project.notes.push(newNote);
+
+    // later:
+    // this.saveToLocalStorage();
   }
 
   deleteProject(id: number): void {

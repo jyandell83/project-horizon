@@ -6,10 +6,13 @@ import { FormsModule } from '@angular/forms';
 
 import { ProjectsService } from '../../services/projects.service';
 
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, FontAwesomeModule],
   templateUrl: './project-list.component.html',
   styleUrl: './project-list.component.scss',
 })
@@ -19,6 +22,7 @@ export class ProjectListComponent {
   projects = this.projectsService.getProjects();
   editingNoteProjectId: number | null = null;
   noteText = '';
+  faTrash = faTrash;
 
   updateAttempts(id: number, change: number): void {
     this.projectsService.updateAttempts(id, change);

@@ -9,7 +9,13 @@
       <span class="project-card__grade">{{ project.grade }}</span>
     </div>
     @for (note of project.notes; track note.id) {
-      <p class="project-card__notes">{{ note.body }}</p>
+      <div>
+        <p class="project-card__notes">{{ note.body }}</p>
+        <span>{{ note.date }}</span>
+        <button class="button-danger">
+          <fa-icon [icon]="faTrash"></fa-icon>
+        </button>
+      </div>
     }
     @if (editingNoteProjectId !== project.id) {
       <button (click)="showNoteEditor(project.id)">Add Note</button>

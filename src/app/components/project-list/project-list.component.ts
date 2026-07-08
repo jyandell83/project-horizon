@@ -29,8 +29,10 @@ export class ProjectListComponent {
   }
 
   deleteProject(id: number): void {
-    this.projectsService.deleteProject(id);
-    this.projects = this.projectsService.getProjects();
+    if (confirm('Delete this project?')) {
+      this.projectsService.deleteProject(id);
+      this.projects = this.projectsService.getProjects();
+    }
   }
 
   showNoteEditor(projectId: number): void {

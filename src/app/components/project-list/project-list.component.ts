@@ -53,4 +53,10 @@ export class ProjectListComponent {
     this.editingNoteProjectId = null;
     this.noteText = '';
   }
+
+  deleteNote(projectId: number, noteId: number) {
+    if (confirm('Delete this note?')) {
+      this.projectsService.deleteNote(projectId, noteId);
+    }
+  }
 }

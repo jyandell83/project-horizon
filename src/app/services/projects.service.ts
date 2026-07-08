@@ -62,6 +62,16 @@ export class ProjectsService {
     // this.saveToLocalStorage();
   }
 
+  deleteNote(projectId: number, noteId: number) {
+    const project = this.projects.find((p) => p.id === projectId);
+
+    if (!project) {
+      return;
+    }
+
+    project.notes = project.notes.filter((note) => note.id !== noteId);
+  }
+
   deleteProject(id: number): void {
     this.projects = this.projects.filter((project) => project.id !== id);
   }

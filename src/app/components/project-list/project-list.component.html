@@ -12,7 +12,7 @@
       <div>
         <p class="project-card__notes">{{ note.body }}</p>
         <span>{{ note.date }}</span>
-        <button class="button-danger">
+        <button class="button-danger" (click)="deleteNote(project.id, note.id)">
           <fa-icon [icon]="faTrash"></fa-icon>
         </button>
       </div>

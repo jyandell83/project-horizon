@@ -12,13 +12,19 @@
       <div>
         <p class="project-card__notes">{{ note.body }}</p>
         <span>{{ note.date }}</span>
+        <button
+          class="button-primary"
+          (click)="startEditingNote(project.id, note)"
+        >
+          <fa-icon [icon]="faEdit"></fa-icon>
+        </button>
         <button class="button-danger" (click)="deleteNote(project.id, note.id)">
           <fa-icon [icon]="faTrash"></fa-icon>
         </button>
       </div>
     }
     @if (editingNoteProjectId !== project.id) {
-      <button (click)="showNoteEditor(project.id)">Add Note</button>
+      <button (click)="startAddingNote(project.id)">Add Note</button>
     } @else {
       <textarea [(ngModel)]="noteText" placeholder="Add a note..."></textarea>
 

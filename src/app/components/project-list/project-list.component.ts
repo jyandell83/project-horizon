@@ -2,12 +2,14 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 // import { PROJECTS } from '../../data/dummy-projects';
 import { Project } from '../../models/project';
+import { ProjectNote } from '../../models/project';
 import { FormsModule } from '@angular/forms';
 
 import { ProjectsService } from '../../services/projects.service';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-project-list',
@@ -22,7 +24,9 @@ export class ProjectListComponent {
   projects = this.projectsService.getProjects();
   editingNoteProjectId: number | null = null;
   noteText = '';
+  noteBeingEdited: ProjectNote | null = null;
   faTrash = faTrash;
+  faEdit = faPenToSquare;
 
   updateAttempts(id: number, change: number): void {
     this.projectsService.updateAttempts(id, change);
@@ -35,9 +39,16 @@ export class ProjectListComponent {
     }
   }
 
-  showNoteEditor(projectId: number): void {
+  startAddingNote(projectId: number): void {
     this.editingNoteProjectId = projectId;
+    this.noteBeingEdited = null;
     this.noteText = '';
+  }
+
+  startEditingNote(projectId: number, note: ProjectNote): void {
+    this.editingNoteProjectId = projectId;
+    this.noteBeingEdited = note;
+    this.noteText = note.body;
   }
 
   cancelNote(): void {
@@ -50,7 +61,15 @@ export class ProjectListComponent {
       return;
     }
 
-    this.projectsService.addNote(project.id, this.noteText);
+    if (this.noteBeingEdited) {
+      this.projectsService.updateNote(
+        project.id,
+        this.noteBeingEdited.id,
+        this.noteText,
+      );
+    } else {
+      this.projectsService.addNote(project.id, this.noteText);
+    }
 
     this.editingNoteProjectId = null;
     this.noteText = '';

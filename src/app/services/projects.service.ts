@@ -72,6 +72,18 @@ export class ProjectsService {
     project.notes = project.notes.filter((note) => note.id !== noteId);
   }
 
+  updateNote(projectId: number, noteId: number, updatedBody: string): void {
+    const project = this.projects.find((project) => project.id === projectId);
+
+    const note = project?.notes.find((note) => note.id === noteId);
+
+    if (!note) {
+      return;
+    }
+
+    note.body = updatedBody;
+  }
+
   deleteProject(id: number): void {
     this.projects = this.projects.filter((project) => project.id !== id);
   }

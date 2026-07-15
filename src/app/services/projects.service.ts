@@ -39,9 +39,17 @@ export class ProjectsService {
   updateProject(updatedProject: Project): void {
     this.projectsSignal.update((projects) =>
       projects.map((project) =>
-        project.id === updatedProject.id ? updatedProject : project,
+        project.id === updatedProject.id
+          ? {
+              ...project,
+              ...updatedProject,
+              attempts: project.attempts,
+              notes: project.notes,
+            }
+          : project,
       ),
     );
+
     this.saveProjects();
   }
 

@@ -1,1 +1,31 @@
-<p>active-session works!</p>
+<section>
+  <h1>Active Session</h1>
+
+  @if (!sessionStarted) {
+    <button type="button" (click)="startSession()">Start Session</button>
+  } @else {
+    <p>Session in progress</p>
+
+    @if (activePhase) {
+      <h2>Current phase: {{ activePhase }}</h2>
+
+      <button type="button" (click)="endPhase()">End Phase</button>
+    } @else {
+      <h2>Start a phase</h2>
+
+      <button type="button" (click)="startPhase('Warm-up')">Warm-up</button>
+
+      <button type="button" (click)="startPhase('Free Climb')">
+        Free Climb
+      </button>
+
+      <button type="button" (click)="startPhase('Project')">Project</button>
+
+      <button type="button" (click)="startPhase('Strength')">Strength</button>
+
+      <button type="button" (click)="startPhase('Cardio')">Cardio</button>
+    }
+
+    <button type="button" (click)="endSession()">End Session</button>
+  }
+</section>

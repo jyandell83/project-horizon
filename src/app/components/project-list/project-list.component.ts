@@ -21,7 +21,7 @@ import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 export class ProjectListComponent {
   private projectsService = inject(ProjectsService);
 
-  projects = this.projectsService.getProjects();
+  projects = this.projectsService.projects;
   editingNoteProjectId: number | null = null;
   noteText = '';
   noteBeingEdited: ProjectNote | null = null;
@@ -35,7 +35,7 @@ export class ProjectListComponent {
   deleteProject(id: number): void {
     if (confirm('Delete this project?')) {
       this.projectsService.deleteProject(id);
-      this.projects = this.projectsService.getProjects();
+      this.projects = this.projectsService.projects;
     }
   }
 

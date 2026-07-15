@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Project } from '../models/project';
-import { ProjectNote } from '../models/project';
+import { Injectable, signal } from '@angular/core';
+import { Project, ProjectNote } from '../models/project';
 
 import { PROJECTS } from '../data/dummy-projects';
 
@@ -8,14 +7,23 @@ import { PROJECTS } from '../data/dummy-projects';
   providedIn: 'root',
 })
 export class ProjectsService {
-  private projects: Project[] = [...PROJECTS];
+  constructor() {
+    const storedProjects = localStorage.getItem('projects');
+    if (storedProjects) {
+      this.projectsSignal.set(JSON.parse(storedProjects) as Project[]);
+    } else {
+      this.projectsSignal.set([...PROJECTS]);
+    }
+  }
+  private readonly projectsSignal = signal<Project[]>([]);
+  readonly projects = this.projectsSignal.asReadonly();
 
-  getProjects(): Project[] {
-    return this.projects;
+  private saveProjects(): void {
+    localStorage.setItem('projects', JSON.stringify(this.projectsSignal()));
   }
 
   getProjectById(id: number): Project | undefined {
-    return this.projects.find((project) => project.id === id);
+    return this.projectsSignal().find((project) => project.id === id);
   }
 
   addProject(project: Omit<Project, 'id'>): void {
@@ -24,67 +32,92 @@ export class ProjectsService {
       id: Date.now(),
     };
 
-    this.projects.push(newProject);
+    this.projectsSignal.update((projects) => [...projects, newProject]);
+    this.saveProjects();
   }
 
   updateProject(updatedProject: Project): void {
-    const index = this.projects.findIndex(
-      (project) => project.id === updatedProject.id,
+    this.projectsSignal.update((projects) =>
+      projects.map((project) =>
+        project.id === updatedProject.id ? updatedProject : project,
+      ),
     );
-
-    if (index !== -1) {
-      this.projects[index] = updatedProject;
-    }
+    this.saveProjects();
   }
 
   updateAttempts(id: number, change: number): void {
-    const project = this.projects.find((p) => p.id === id);
-
-    if (!project) return;
-
-    project.attempts = Math.max(0, project.attempts + change);
+    this.projectsSignal.update((projects) =>
+      projects.map((project) =>
+        project.id === id
+          ? {
+              ...project,
+              attempts: Math.max(0, project.attempts + change),
+            }
+          : project,
+      ),
+    );
+    this.saveProjects();
   }
 
   addNote(projectId: number, body: string): void {
-    const project = this.projects.find((project) => project.id === projectId);
-
-    if (!project) return;
-
     const newNote: ProjectNote = {
       id: Date.now(),
       date: new Date().toISOString(),
       body: body.trim(),
     };
 
-    project.notes.push(newNote);
-
-    // later:
-    // this.saveToLocalStorage();
+    this.projectsSignal.update((projects) =>
+      projects.map((project) =>
+        project.id === projectId
+          ? {
+              ...project,
+              notes: [...project.notes, newNote],
+            }
+          : project,
+      ),
+    );
+    this.saveProjects();
   }
 
-  deleteNote(projectId: number, noteId: number) {
-    const project = this.projects.find((p) => p.id === projectId);
-
-    if (!project) {
-      return;
-    }
-
-    project.notes = project.notes.filter((note) => note.id !== noteId);
+  deleteNote(projectId: number, noteId: number): void {
+    this.projectsSignal.update((projects) =>
+      projects.map((project) =>
+        project.id === projectId
+          ? {
+              ...project,
+              notes: project.notes.filter((note) => note.id !== noteId),
+            }
+          : project,
+      ),
+    );
+    this.saveProjects();
   }
 
   updateNote(projectId: number, noteId: number, updatedBody: string): void {
-    const project = this.projects.find((project) => project.id === projectId);
-
-    const note = project?.notes.find((note) => note.id === noteId);
-
-    if (!note) {
-      return;
-    }
-
-    note.body = updatedBody;
+    this.projectsSignal.update((projects) =>
+      projects.map((project) =>
+        project.id === projectId
+          ? {
+              ...project,
+              notes: project.notes.map((note) =>
+                note.id === noteId
+                  ? {
+                      ...note,
+                      body: updatedBody,
+                    }
+                  : note,
+              ),
+            }
+          : project,
+      ),
+    );
+    this.saveProjects();
   }
 
   deleteProject(id: number): void {
-    this.projects = this.projects.filter((project) => project.id !== id);
+    this.projectsSignal.update((projects) =>
+      projects.filter((project) => project.id !== id),
+    );
+    this.saveProjects();
   }
 }

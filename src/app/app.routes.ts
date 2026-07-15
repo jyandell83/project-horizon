@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { ProjectsPageComponent } from './pages/projects-page/projects-page.component';
 import { SessionsPageComponent } from './pages/sessions-page/sessions-page.component';
+import { SessionsActivePageComponent } from './pages/sessions-active-page/sessions-active-page.component';
 import { ProjectFormPageComponent } from './pages/project-form-page/project-form-page.component';
 
 export const routes: Routes = [
@@ -21,5 +22,9 @@ export const routes: Routes = [
   {
     path: 'sessions',
     component: SessionsPageComponent,
+  },
+  {
+    path: 'sessions/active',
+    component: SessionsActivePageComponent,
   },
 ];

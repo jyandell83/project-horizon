@@ -9,9 +9,24 @@ import {
   providedIn: 'root',
 })
 export class SessionsService {
+  constructor() {
+    const storedSession = localStorage.getItem('activeSession');
+
+    if (storedSession) {
+      this.activeSessionSignal.set(
+        JSON.parse(storedSession) as ClimbingSession,
+      );
+    }
+  }
   private readonly activeSessionSignal = signal<ClimbingSession | null>(null);
 
   readonly activeSession = this.activeSessionSignal.asReadonly();
+
+  private saveActiveSession(): void {
+    const session = this.activeSessionSignal();
+
+    localStorage.setItem('activeSession', JSON.stringify(session));
+  }
 
   startSession(): void {
     if (this.activeSessionSignal()) {
@@ -27,6 +42,8 @@ export class SessionsService {
     };
 
     this.activeSessionSignal.set(newSession);
+
+    this.saveActiveSession();
   }
 
   startPhase(type: SessionPhaseType, projectId?: string): void {
@@ -61,6 +78,7 @@ export class SessionsService {
       ...session,
       phases: [...updatedPhases, newPhase],
     });
+    this.saveActiveSession();
   }
 
   endCurrentPhase(): void {
@@ -87,6 +105,7 @@ export class SessionsService {
       ...session,
       phases: updatedPhases,
     });
+    this.saveActiveSession();
   }
 
   addNote(note: string): void {
@@ -101,6 +120,7 @@ export class SessionsService {
       ...session,
       notes: [...session.notes, trimmedNote],
     });
+    this.saveActiveSession();
   }
 
   endSession(): ClimbingSession | null {
@@ -128,6 +148,7 @@ export class SessionsService {
     };
 
     this.activeSessionSignal.set(null);
+    localStorage.removeItem('activeSession');
 
     return completedSession;
   }

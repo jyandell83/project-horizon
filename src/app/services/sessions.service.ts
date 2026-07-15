@@ -10,17 +10,31 @@ import {
 })
 export class SessionsService {
   constructor() {
-    const storedSession = localStorage.getItem('activeSession');
+    const storedActiveSession = localStorage.getItem('activeSession');
 
-    if (storedSession) {
+    if (storedActiveSession) {
       this.activeSessionSignal.set(
-        JSON.parse(storedSession) as ClimbingSession,
+        JSON.parse(storedActiveSession) as ClimbingSession,
       );
     }
+
+    const storedSessions = localStorage.getItem('sessions');
+
+    if (storedSessions) {
+      this.sessionsSignal.set(JSON.parse(storedSessions) as ClimbingSession[]);
+    }
   }
+
+  private readonly sessionsSignal = signal<ClimbingSession[]>([]);
+
+  readonly sessions = this.sessionsSignal.asReadonly();
   private readonly activeSessionSignal = signal<ClimbingSession | null>(null);
 
   readonly activeSession = this.activeSessionSignal.asReadonly();
+
+  private saveSessions(): void {
+    localStorage.setItem('sessions', JSON.stringify(this.sessionsSignal()));
+  }
 
   private saveActiveSession(): void {
     const session = this.activeSessionSignal();
@@ -146,6 +160,10 @@ export class SessionsService {
         return phase;
       }),
     };
+
+    this.sessionsSignal.update((sessions) => [completedSession, ...sessions]);
+
+    this.saveSessions();
 
     this.activeSessionSignal.set(null);
     localStorage.removeItem('activeSession');

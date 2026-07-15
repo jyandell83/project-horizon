@@ -1,7 +1,7 @@
 <section class="sessions-page">
   <h1>Sessions</h1>
 
-  @for (session of sessions; track session.id) {
+  @for (session of sessions(); track session.id) {
     <article class="session-card">
       <header class="session-card__header">
         <div>

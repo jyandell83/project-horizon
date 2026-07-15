@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { SESSIONS } from '../../data/dummy-sessions';
 import { ClimbingSession } from '../../models/session';
+
+import { SessionsService } from '../../services/sessions.service';
 
 @Component({
   selector: 'app-session-list',
@@ -11,5 +13,8 @@ import { ClimbingSession } from '../../models/session';
   styleUrl: './session-list.component.scss',
 })
 export class SessionListComponent {
-  sessions: ClimbingSession[] = SESSIONS;
+  // sessions: ClimbingSession[] = SESSIONS;
+  private readonly sessionsService = inject(SessionsService);
+
+  readonly sessions = this.sessionsService.sessions;
 }

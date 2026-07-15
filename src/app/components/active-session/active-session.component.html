@@ -1,31 +1,42 @@
-<section>
-  <h1>Active Session</h1>
+@if (!session) {
+  <button type="button" (click)="startSession()">Start Session</button>
+} @else {
+  <p>Session in progress</p>
+  @if (session) {
+    <h2>Phases</h2>
 
-  @if (!sessionStarted) {
-    <button type="button" (click)="startSession()">Start Session</button>
-  } @else {
-    <p>Session in progress</p>
+    @for (phase of session.phases; track phase.id) {
+      <div>
+        <strong>{{ phase.type }}</strong>
 
-    @if (activePhase) {
-      <h2>Current phase: {{ activePhase }}</h2>
-
-      <button type="button" (click)="endPhase()">End Phase</button>
-    } @else {
-      <h2>Start a phase</h2>
-
-      <button type="button" (click)="startPhase('Warm-up')">Warm-up</button>
-
-      <button type="button" (click)="startPhase('Free Climb')">
-        Free Climb
-      </button>
-
-      <button type="button" (click)="startPhase('Project')">Project</button>
-
-      <button type="button" (click)="startPhase('Strength')">Strength</button>
-
-      <button type="button" (click)="startPhase('Cardio')">Cardio</button>
+        <p>
+          {{ phase.startedAt | date: "shortTime" }}
+          -
+          @if (phase.endedAt) {
+            {{ phase.endedAt | date: "shortTime" }}
+          } @else {
+            In progress
+          }
+        </p>
+      </div>
+    } @empty {
+      <p>No phases recorded yet.</p>
     }
-
-    <button type="button" (click)="endSession()">End Session</button>
   }
-</section>
+
+  @for (phase of session.phases; track phase.id) {
+    @if (phase.endedAt === null) {
+      <h2>Current phase: {{ phase.type }}</h2>
+    }
+  }
+
+  <button type="button" (click)="startPhase('warm-up')">Warm-up</button>
+
+  <button type="button" (click)="startPhase('free-climb')">Free Climb</button>
+
+  <button type="button" (click)="startPhase('project')">Project</button>
+
+  <button type="button" (click)="endPhase()">End Phase</button>
+
+  <button type="button" (click)="endSession()">End Session</button>
+}

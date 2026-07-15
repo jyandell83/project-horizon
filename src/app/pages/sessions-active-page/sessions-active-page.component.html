@@ -1,2 +1,7 @@
-<p>sessions-active-page works!</p>
-<app-active-session />
+<app-active-session
+  [session]="activeSession()"
+  (sessionStart)="startSession()"
+  (phaseStart)="startPhase($event)"
+  (phaseEnd)="endPhase()"
+  (sessionEnd)="endSession()"
+/>

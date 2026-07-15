@@ -1,23 +1,25 @@
 export type SessionPhaseType =
-  | 'warmup'
-  | 'freeclimb'
-  | 'projecting'
-  | 'cooldown';
+  | 'warm-up'
+  | 'free-climb'
+  | 'project'
+  | 'strength'
+  | 'cardio'
+  | 'other';
 
 export interface SessionPhase {
-  id: number;
+  id: string;
   type: SessionPhaseType;
-  startTime: string;
-  endTime?: string;
+  startedAt: string;
+  endedAt: string | null;
+  projectId?: string;
 }
 
 export interface ClimbingSession {
-  id: number;
-  date: string;
-  location: string;
-  environment: 'gym' | 'outdoor';
-  startTime: string;
-  endTime?: string;
+  id: string;
+  startedAt: string;
+  endedAt: string | null;
+  location?: string;
+  environment?: 'gym' | 'outdoor';
   phases: SessionPhase[];
-  notes?: string;
+  notes: string[];
 }

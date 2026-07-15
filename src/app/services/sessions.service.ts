@@ -1,0 +1,134 @@
+import { Injectable, signal } from '@angular/core';
+import {
+  ClimbingSession,
+  SessionPhase,
+  SessionPhaseType,
+} from '../models/session';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SessionsService {
+  private readonly activeSessionSignal = signal<ClimbingSession | null>(null);
+
+  readonly activeSession = this.activeSessionSignal.asReadonly();
+
+  startSession(): void {
+    if (this.activeSessionSignal()) {
+      return;
+    }
+
+    const newSession: ClimbingSession = {
+      id: crypto.randomUUID(),
+      startedAt: new Date().toISOString(),
+      endedAt: null,
+      phases: [],
+      notes: [],
+    };
+
+    this.activeSessionSignal.set(newSession);
+  }
+
+  startPhase(type: SessionPhaseType, projectId?: string): void {
+    const session = this.activeSessionSignal();
+
+    if (!session) {
+      return;
+    }
+
+    const timestamp = new Date().toISOString();
+
+    const updatedPhases = session.phases.map((phase) => {
+      if (phase.endedAt === null) {
+        return {
+          ...phase,
+          endedAt: timestamp,
+        };
+      }
+
+      return phase;
+    });
+
+    const newPhase: SessionPhase = {
+      id: crypto.randomUUID(),
+      type,
+      startedAt: timestamp,
+      endedAt: null,
+      projectId,
+    };
+
+    this.activeSessionSignal.set({
+      ...session,
+      phases: [...updatedPhases, newPhase],
+    });
+  }
+
+  endCurrentPhase(): void {
+    const session = this.activeSessionSignal();
+
+    if (!session) {
+      return;
+    }
+
+    const timestamp = new Date().toISOString();
+
+    const updatedPhases = session.phases.map((phase) => {
+      if (phase.endedAt === null) {
+        return {
+          ...phase,
+          endedAt: timestamp,
+        };
+      }
+
+      return phase;
+    });
+
+    this.activeSessionSignal.set({
+      ...session,
+      phases: updatedPhases,
+    });
+  }
+
+  addNote(note: string): void {
+    const session = this.activeSessionSignal();
+    const trimmedNote = note.trim();
+
+    if (!session || !trimmedNote) {
+      return;
+    }
+
+    this.activeSessionSignal.set({
+      ...session,
+      notes: [...session.notes, trimmedNote],
+    });
+  }
+
+  endSession(): ClimbingSession | null {
+    const session = this.activeSessionSignal();
+
+    if (!session) {
+      return null;
+    }
+
+    const timestamp = new Date().toISOString();
+
+    const completedSession: ClimbingSession = {
+      ...session,
+      endedAt: timestamp,
+      phases: session.phases.map((phase) => {
+        if (phase.endedAt === null) {
+          return {
+            ...phase,
+            endedAt: timestamp,
+          };
+        }
+
+        return phase;
+      }),
+    };
+
+    this.activeSessionSignal.set(null);
+
+    return completedSession;
+  }
+}

@@ -1,30 +1,35 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ClimbingSession, SessionPhaseType } from '../../models/session';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-active-session',
   standalone: true,
-  imports: [],
+  imports: [DatePipe],
   templateUrl: './active-session.component.html',
   styleUrl: './active-session.component.scss',
 })
 export class ActiveSessionComponent {
-  sessionStarted = false;
-  activePhase: string | null = null;
+  @Input() session: ClimbingSession | null = null;
+
+  @Output() sessionStart = new EventEmitter<void>();
+  @Output() phaseStart = new EventEmitter<SessionPhaseType>();
+  @Output() phaseEnd = new EventEmitter<void>();
+  @Output() sessionEnd = new EventEmitter<void>();
 
   startSession(): void {
-    this.sessionStarted = true;
+    this.sessionStart.emit();
   }
 
-  startPhase(phase: string): void {
-    this.activePhase = phase;
+  startPhase(phase: SessionPhaseType): void {
+    this.phaseStart.emit(phase);
   }
 
   endPhase(): void {
-    this.activePhase = null;
+    this.phaseEnd.emit();
   }
 
   endSession(): void {
-    this.sessionStarted = false;
-    this.activePhase = null;
+    this.sessionEnd.emit();
   }
 }

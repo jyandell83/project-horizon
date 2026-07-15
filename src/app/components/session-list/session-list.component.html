@@ -5,18 +5,25 @@
     <article class="session-card">
       <header class="session-card__header">
         <div>
-          <h2>{{ session.location }}</h2>
-          <p>{{ session.date | date }}</p>
+          <h2>{{ session.location || "Unknown Location" }}</h2>
+          <p>{{ session.startedAt | date: "fullDate" }}</p>
         </div>
 
-        <span>{{ session.environment }}</span>
+        @if (session.environment) {
+          <span>{{ session.environment }}</span>
+        }
       </header>
 
       <div class="session-card__times">
         <p>
-          <strong>Start:</strong> {{ session.startTime | date: "shortTime" }}
+          <strong>Start:</strong>
+          {{ session.startedAt | date: "shortTime" }}
         </p>
-        <p><strong>End:</strong> {{ session.endTime | date: "shortTime" }}</p>
+
+        <p>
+          <strong>End:</strong>
+          {{ session.endedAt | date: "shortTime" }}
+        </p>
       </div>
 
       <h3>Session Phases</h3>
@@ -25,17 +32,24 @@
         @for (phase of session.phases; track phase.id) {
           <li>
             <strong>{{ phase.type }}</strong>
+
             <div>
-              {{ phase.startTime | date: "shortTime" }} -
-              {{ phase.endTime | date: "shortTime" }}
+              {{ phase.startedAt | date: "shortTime" }} -
+              {{ phase.endedAt | date: "shortTime" }}
             </div>
           </li>
         }
       </ul>
 
-      <p class="session-notes">
-        {{ session.notes }}
-      </p>
+      @if (session.notes.length) {
+        <h3>Notes</h3>
+
+        <ul class="session-notes">
+          @for (note of session.notes; track $index) {
+            <li>{{ note }}</li>
+          }
+        </ul>
+      }
     </article>
   }
 </section>

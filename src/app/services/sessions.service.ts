@@ -4,6 +4,7 @@ import {
   SessionPhase,
   SessionPhaseType,
 } from '../models/session';
+import { SESSIONS } from '../data/dummy-sessions';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +23,8 @@ export class SessionsService {
 
     if (storedSessions) {
       this.sessionsSignal.set(JSON.parse(storedSessions) as ClimbingSession[]);
+    } else {
+      this.sessionsSignal.set([...SESSIONS]);
     }
   }
 

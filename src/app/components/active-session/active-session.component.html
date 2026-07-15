@@ -27,16 +27,26 @@
   @for (phase of session.phases; track phase.id) {
     @if (phase.endedAt === null) {
       <h2>Current phase: {{ phase.type }}</h2>
+      <div class="flex">
+        <button class="button-danger" type="button" (click)="endPhase()">
+          End Phase
+        </button>
+      </div>
     }
   }
+  <h2>Start something else</h2>
+  <div class="flex">
+    <button type="button" (click)="startPhase('warm-up')">Warm-up</button>
+    <button type="button" (click)="startPhase('free-climb')">Free Climb</button>
+    <button type="button" (click)="startPhase('project')">Project</button>
+    <button type="button" (click)="startPhase('strength')">Strength</button>
+    <button type="button" (click)="startPhase('cardio')">Cardio</button>
+    <button type="button" (click)="startPhase('other')">Other</button>
+  </div>
 
-  <button type="button" (click)="startPhase('warm-up')">Warm-up</button>
-
-  <button type="button" (click)="startPhase('free-climb')">Free Climb</button>
-
-  <button type="button" (click)="startPhase('project')">Project</button>
-
-  <button type="button" (click)="endPhase()">End Phase</button>
-
-  <button type="button" (click)="endSession()">End Session</button>
+  <div>
+    <button class="button-danger" type="button" (click)="endSession()">
+      End Session
+    </button>
+  </div>
 }

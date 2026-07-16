@@ -1,6 +1,11 @@
 import { Component, inject } from '@angular/core';
 
-import { ReactiveFormsModule, FormBuilder, FormControl } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormControl,
+  Validators,
+} from '@angular/forms';
 
 import { ProjectsService } from '../../services/projects.service';
 
@@ -39,7 +44,7 @@ export class ProjectFormPageComponent {
   }
 
   projectForm = this.fb.nonNullable.group({
-    name: [''],
+    name: ['', Validators.required],
     grade: [''],
     location: [''],
     environment: new FormControl<'gym' | 'outdoor'>('gym', {
@@ -48,6 +53,10 @@ export class ProjectFormPageComponent {
   });
 
   saveProject() {
+    if (this.projectForm.invalid) {
+      this.projectForm.markAllAsTouched();
+      return;
+    }
     const formValue = this.projectForm.getRawValue();
 
     if (this.isEditing && this.projectId) {

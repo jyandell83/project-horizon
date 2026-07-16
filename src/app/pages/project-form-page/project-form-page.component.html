@@ -35,6 +35,6 @@
     </select>
   </label>
 
-  <button type="submit">Save Project</button>
+  <button type="submit" [disabled]="projectForm.invalid">Save Project</button>
 </form>
 <button class="button-primary" (click)="saveProject()">Save</button>

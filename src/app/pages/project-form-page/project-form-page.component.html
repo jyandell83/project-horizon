@@ -3,6 +3,9 @@
     Project Name
     <input type="text" formControlName="name" />
   </label>
+  @if (projectForm.controls.name.invalid && projectForm.controls.name.touched) {
+    <p class="error">Project name is required.</p>
+  }
 
   <label>
     Grade

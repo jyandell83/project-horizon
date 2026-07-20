@@ -3,6 +3,7 @@ import {
   ClimbingSession,
   SessionPhase,
   SessionPhaseType,
+  ProjectWork,
 } from '../models/session';
 import { SESSIONS } from '../data/dummy-sessions';
 
@@ -43,6 +44,27 @@ export class SessionsService {
     const session = this.activeSessionSignal();
 
     localStorage.setItem('activeSession', JSON.stringify(session));
+  }
+
+  private getCurrentPhase(): SessionPhase | null {
+    const session = this.activeSessionSignal();
+
+    if (!session) return null;
+
+    return session.phases.at(-1) ?? null;
+  }
+
+  addProjectToCurrentPhase(projectId: string): void {
+    const currentPhase = this.getCurrentPhase();
+    if (currentPhase?.type !== 'project') {
+      return;
+    }
+    currentPhase.projectWork.push({
+      projectId,
+      attempts: 0,
+      notes: [],
+    });
+    this.saveActiveSession();
   }
 
   startSession(): void {
@@ -88,7 +110,7 @@ export class SessionsService {
       type,
       startedAt: timestamp,
       endedAt: null,
-      projectId,
+      projectWork: [],
     };
 
     this.activeSessionSignal.set({

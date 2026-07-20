@@ -3,47 +3,59 @@ import { ClimbingSession } from '../models/session';
 export const SESSIONS: ClimbingSession[] = [
   {
     id: 'session-1',
-    startedAt: '2026-06-28T18:00:00',
-    endedAt: '2026-06-28T19:45:00',
+    startedAt: '2026-07-19T17:00:00Z',
+    endedAt: '2026-07-19T18:30:00Z',
+    notes: [],
     phases: [
       {
         id: 'phase-1',
         type: 'warm-up',
-        startedAt: '2026-06-28T18:00:00',
-        endedAt: '2026-06-28T18:15:00',
+        startedAt: '2026-07-19T17:00:00Z',
+        endedAt: '2026-07-19T17:20:00Z',
+        projectWork: [],
       },
       {
         id: 'phase-2',
-        type: 'free-climb',
-        startedAt: '2026-06-28T18:15:00',
-        endedAt: '2026-06-28T18:45:00',
+        type: 'project',
+        startedAt: '2026-07-19T17:20:00Z',
+        endedAt: '2026-07-19T18:05:00Z',
+        projectWork: [
+          {
+            projectId: 'project-1',
+            attempts: 6,
+            notes: [
+              {
+                id: 1,
+                date: '2026-07-19T17:35:00Z',
+                body: 'Reached the crux twice.',
+              },
+              {
+                id: 2,
+                date: '2026-07-19T17:50:00Z',
+                body: 'Need to trust left foot.',
+              },
+            ],
+          },
+          {
+            projectId: 'project-2',
+            attempts: 2,
+            notes: [
+              {
+                id: 3,
+                date: '2026-07-19T18:00:00Z',
+                body: 'Just tried a couple moves.',
+              },
+            ],
+          },
+        ],
       },
       {
         id: 'phase-3',
-        type: 'project',
-        startedAt: '2026-06-28T18:45:00',
-        endedAt: '2026-06-28T19:45:00',
-        projectId: 'project-1',
+        type: 'strength',
+        startedAt: '2026-07-19T18:05:00Z',
+        endedAt: '2026-07-19T18:30:00Z',
+        projectWork: [],
       },
     ],
-    notes: [
-      'Good session.',
-      'Took enough time warming up before trying hard moves.',
-    ],
-  },
-  {
-    id: 'session-2',
-    startedAt: '2026-04-01T10:00:00',
-    endedAt: '2026-04-01T12:30:00',
-    phases: [
-      {
-        id: 'phase-4',
-        type: 'project',
-        startedAt: '2026-04-01T10:00:00',
-        endedAt: '2026-04-01T12:30:00',
-        projectId: 'project-2',
-      },
-    ],
-    notes: ['Beautiful day, perfect weather for climbing.'],
   },
 ];

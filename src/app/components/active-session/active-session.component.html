@@ -27,20 +27,26 @@
   @for (phase of session.phases; track phase.id) {
     @if (phase.endedAt === null) {
       <h2>Current phase: {{ phase.type }}</h2>
+      @for (project of phase.projectWork; track project.projectId) {
+        <span>{{ project.projectId }}</span>
+      }
       <div class="flex">
         <button class="button-danger" type="button" (click)="endPhase()">
           End Phase
         </button>
       </div>
       @if (phase.type === "project") {
-        <div>
-          <select name="" id="">
-            @for (project of projects(); track project.id) {
-              <option>{{ project.name }}</option>
-            }
-          </select>
-          <button class="button-primary">Work Project</button>
-        </div>
+        <select [(ngModel)]="selectedProjectId">
+          <option value="">Select Project</option>
+
+          @for (project of projects(); track project.id) {
+            <option [value]="project.id">
+              {{ project.name }}
+            </option>
+          }
+        </select>
+
+        <button (click)="addProject()">Add Project</button>
       }
     }
   }

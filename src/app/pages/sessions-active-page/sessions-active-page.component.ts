@@ -23,6 +23,10 @@ export class SessionsActivePageComponent {
     this.sessionsService.startPhase(type);
   }
 
+  onProjectAdded(projectId: string): void {
+    this.sessionsService.addProjectToCurrentPhase(projectId);
+  }
+
   endPhase(): void {
     this.sessionsService.endCurrentPhase();
   }

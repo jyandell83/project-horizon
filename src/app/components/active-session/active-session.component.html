@@ -32,6 +32,16 @@
           End Phase
         </button>
       </div>
+      @if (phase.type === "project") {
+        <div>
+          <select name="" id="">
+            @for (project of projects(); track project.id) {
+              <option>{{ project.name }}</option>
+            }
+          </select>
+          <button class="button-primary">Work Project</button>
+        </div>
+      }
     }
   }
   <h2>Start something else</h2>

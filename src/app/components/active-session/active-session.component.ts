@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { ClimbingSession, SessionPhaseType } from '../../models/session';
 import { DatePipe } from '@angular/common';
+import { ProjectsService } from '../../services/projects.service';
 
 @Component({
   selector: 'app-active-session',
@@ -10,6 +11,9 @@ import { DatePipe } from '@angular/common';
   styleUrl: './active-session.component.scss',
 })
 export class ActiveSessionComponent {
+  private projectsService = inject(ProjectsService);
+  projects = this.projectsService.projects;
+
   @Input() session: ClimbingSession | null = null;
 
   @Output() sessionStart = new EventEmitter<void>();

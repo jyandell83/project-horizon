@@ -28,7 +28,7 @@
     @if (phase.endedAt === null) {
       <h2>Current phase: {{ phase.type }}</h2>
       @for (project of phase.projectWork; track project.projectId) {
-        <span>{{ project.projectId }}</span>
+        <span>{{ getProjectName(project.projectId) }}</span>
       }
       <div class="flex">
         <button class="button-danger" type="button" (click)="endPhase()">
@@ -40,7 +40,7 @@
           <option value="">Select Project</option>
 
           @for (project of projects(); track project.id) {
-            <option [value]="project.id">
+            <option [ngValue]="project.id">
               {{ project.name }}
             </option>
           }

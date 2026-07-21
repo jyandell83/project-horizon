@@ -9,7 +9,7 @@ export type SessionPhaseType =
   | 'other';
 
 export interface ProjectWork {
-  projectId: string;
+  projectId: number;
   attempts: number;
   notes: ProjectNote[];
 }

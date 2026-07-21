@@ -21,7 +21,7 @@ export const SESSIONS: ClimbingSession[] = [
         endedAt: '2026-07-19T18:05:00Z',
         projectWork: [
           {
-            projectId: 'project-1',
+            projectId: 1,
             attempts: 6,
             notes: [
               {
@@ -37,7 +37,7 @@ export const SESSIONS: ClimbingSession[] = [
             ],
           },
           {
-            projectId: 'project-2',
+            projectId: 2,
             attempts: 2,
             notes: [
               {

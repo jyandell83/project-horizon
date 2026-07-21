@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 export class ActiveSessionComponent {
   private projectsService = inject(ProjectsService);
   projects = this.projectsService.projects;
-  selectedProjectId = '';
+  selectedProjectId = null;
 
   @Input() session: ClimbingSession | null = null;
 
@@ -22,7 +22,7 @@ export class ActiveSessionComponent {
   @Output() phaseStart = new EventEmitter<SessionPhaseType>();
   @Output() phaseEnd = new EventEmitter<void>();
   @Output() sessionEnd = new EventEmitter<void>();
-  @Output() projectAdded = new EventEmitter<string>();
+  @Output() projectAdded = new EventEmitter<number>();
 
   startSession(): void {
     this.sessionStart.emit();
@@ -32,6 +32,12 @@ export class ActiveSessionComponent {
     this.phaseStart.emit(phase);
   }
 
+  getProjectName(projectId: number): string {
+    return (
+      this.projectsService.getProjectById(projectId)?.name ?? 'Unknown Project'
+    );
+  }
+
   addProject(): void {
     if (!this.selectedProjectId) {
       return;
@@ -39,7 +45,7 @@ export class ActiveSessionComponent {
 
     this.projectAdded.emit(this.selectedProjectId);
 
-    this.selectedProjectId = '';
+    this.selectedProjectId = null;
   }
 
   endPhase(): void {

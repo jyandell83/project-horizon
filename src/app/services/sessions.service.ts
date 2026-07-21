@@ -54,7 +54,7 @@ export class SessionsService {
     return session.phases.at(-1) ?? null;
   }
 
-  addProjectToCurrentPhase(projectId: string): void {
+  addProjectToCurrentPhase(projectId: number): void {
     const currentPhase = this.getCurrentPhase();
     if (currentPhase?.type !== 'project') {
       return;

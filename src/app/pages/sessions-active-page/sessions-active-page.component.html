@@ -1,6 +1,6 @@
 <app-active-session
   [session]="activeSession()"
-  (sessionStart)="startSession()"
+  (sessionStart)="startSession($event)"
   (phaseStart)="startPhase($event)"
   (phaseEnd)="endPhase()"
   (sessionEnd)="endSession()"

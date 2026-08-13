@@ -15,17 +15,18 @@ export class ActiveSessionComponent {
   private projectsService = inject(ProjectsService);
   projects = this.projectsService.projects;
   selectedProjectId = null;
+  location = '';
 
   @Input() session: ClimbingSession | null = null;
 
-  @Output() sessionStart = new EventEmitter<void>();
+  @Output() sessionStart = new EventEmitter<string>();
   @Output() phaseStart = new EventEmitter<SessionPhaseType>();
   @Output() phaseEnd = new EventEmitter<void>();
   @Output() sessionEnd = new EventEmitter<void>();
   @Output() projectAdded = new EventEmitter<number>();
 
   startSession(): void {
-    this.sessionStart.emit();
+    this.sessionStart.emit(this.location);
   }
 
   startPhase(phase: SessionPhaseType): void {

@@ -67,7 +67,7 @@ export class SessionsService {
     this.saveActiveSession();
   }
 
-  startSession(): void {
+  startSession(location: string): void {
     if (this.activeSessionSignal()) {
       return;
     }
@@ -76,6 +76,7 @@ export class SessionsService {
       id: crypto.randomUUID(),
       startedAt: new Date().toISOString(),
       endedAt: null,
+      location: location,
       phases: [],
       notes: [],
     };

@@ -15,8 +15,8 @@ export class SessionsActivePageComponent {
 
   readonly activeSession = this.sessionsService.activeSession;
 
-  startSession(): void {
-    this.sessionsService.startSession();
+  startSession(location: string): void {
+    this.sessionsService.startSession(location);
   }
 
   startPhase(type: SessionPhaseType): void {

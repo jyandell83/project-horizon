@@ -27,6 +27,7 @@ export class ActiveSessionComponent {
 
   startSession(): void {
     this.sessionStart.emit(this.location);
+    this.location = '';
   }
 
   startPhase(phase: SessionPhaseType): void {

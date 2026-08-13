@@ -5,7 +5,9 @@
   </label>
   <button type="button" (click)="startSession()">Start Session</button>
 } @else {
-  <p>Session in progress</p>
+  <p>
+    Session in progress at <span>{{ session.location }}</span>
+  </p>
   @if (session) {
     <h2>Phases</h2>
 

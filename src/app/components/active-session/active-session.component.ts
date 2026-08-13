@@ -26,7 +26,13 @@ export class ActiveSessionComponent {
   @Output() projectAdded = new EventEmitter<number>();
 
   startSession(): void {
-    this.sessionStart.emit(this.location);
+    const location = this.location.trim();
+
+    if (!location) {
+      return;
+    }
+    this.sessionStart.emit(location);
+
     this.location = '';
   }
 

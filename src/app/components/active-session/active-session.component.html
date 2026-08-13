@@ -1,9 +1,11 @@
 @if (!session) {
   <label>
     Where are you working out today?
-    <input type="text" [(ngModel)]="location" />
+    <input type="text" [(ngModel)]="location" required />
   </label>
-  <button type="button" (click)="startSession()">Start Session</button>
+  <button type="button" (click)="startSession()" [disabled]="!location.trim()">
+    Start Session
+  </button>
 } @else {
   <p>
     Session in progress at <span>{{ session.location }}</span>

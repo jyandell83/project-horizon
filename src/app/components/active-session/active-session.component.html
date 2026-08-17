@@ -26,6 +26,13 @@
             In progress
           }
         </p>
+        @if (phase.projectWork.length) {
+          @for (project of phase.projectWork; track project.projectId) {
+            <div>
+              {{ getProjectName(project.projectId) }} - {{ project.attempts }}
+            </div>
+          }
+        }
       </div>
     } @empty {
       <p>No phases recorded yet.</p>

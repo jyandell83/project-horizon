@@ -67,6 +67,26 @@ export class SessionsService {
     this.saveActiveSession();
   }
 
+  updateProjectAttempts(projectId: number, change: number): void {
+    const currentPhase = this.getCurrentPhase();
+
+    if (currentPhase?.type !== 'project') {
+      return;
+    }
+
+    const projectWork = currentPhase.projectWork.find(
+      (work) => work.projectId === projectId,
+    );
+
+    if (!projectWork) {
+      return;
+    }
+
+    projectWork.attempts = Math.max(0, projectWork.attempts + change);
+
+    this.saveActiveSession();
+  }
+
   startSession(location: string): void {
     if (this.activeSessionSignal()) {
       return;

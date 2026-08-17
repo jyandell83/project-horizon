@@ -37,6 +37,21 @@
       <h2>Current phase: {{ phase.type }}</h2>
       @for (project of phase.projectWork; track project.projectId) {
         <span>{{ getProjectName(project.projectId) }}</span>
+        <span>
+          <span>{{ project.attempts }} attempts</span>
+          <button
+            class="button-primary"
+            (click)="updateProjectAttempts(project.projectId, 1)"
+          >
+            +
+          </button>
+          <button
+            class="button-primary"
+            (click)="updateProjectAttempts(project.projectId, -1)"
+          >
+            -
+          </button>
+        </span>
       }
       <div class="flex">
         <button class="button-danger" type="button" (click)="endPhase()">

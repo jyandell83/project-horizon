@@ -24,6 +24,10 @@ export class ActiveSessionComponent {
   @Output() phaseEnd = new EventEmitter<void>();
   @Output() sessionEnd = new EventEmitter<void>();
   @Output() projectAdded = new EventEmitter<number>();
+  @Output() projectAttemptsChanged = new EventEmitter<{
+    projectId: number;
+    change: number;
+  }>();
 
   startSession(): void {
     const location = this.location.trim();
@@ -54,6 +58,13 @@ export class ActiveSessionComponent {
     this.projectAdded.emit(this.selectedProjectId);
 
     this.selectedProjectId = null;
+  }
+
+  updateProjectAttempts(projectId: number, change: number): void {
+    this.projectAttemptsChanged.emit({
+      projectId,
+      change,
+    });
   }
 
   endPhase(): void {

@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import {
   ClimbingSession,
   SessionPhase,
@@ -7,10 +7,13 @@ import {
 } from '../models/session';
 import { SESSIONS } from '../data/dummy-sessions';
 
+import { ProjectsService } from './projects.service';
+
 @Injectable({
   providedIn: 'root',
 })
 export class SessionsService {
+  private projectsService = inject(ProjectsService);
   constructor() {
     const storedActiveSession = localStorage.getItem('activeSession');
 
@@ -206,6 +209,20 @@ export class SessionsService {
         return phase;
       }),
     };
+
+    const attemptsByProject = new Map<number, number>();
+
+    for (const phase of completedSession.phases) {
+      for (const work of phase.projectWork ?? []) {
+        const currentAttempts = attemptsByProject.get(work.projectId) ?? 0;
+
+        attemptsByProject.set(work.projectId, currentAttempts + work.attempts);
+      }
+    }
+
+    for (const [projectId, attempts] of attemptsByProject) {
+      this.projectsService.updateAttempts(projectId, attempts);
+    }
 
     this.sessionsSignal.update((sessions) => [completedSession, ...sessions]);
 

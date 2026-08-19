@@ -69,7 +69,7 @@
         <select [(ngModel)]="selectedProjectId">
           <option value="">Select Project</option>
 
-          @for (project of projects(); track project.id) {
+          @for (project of availableProjects; track project.id) {
             <option [ngValue]="project.id">
               {{ project.name }}
             </option>

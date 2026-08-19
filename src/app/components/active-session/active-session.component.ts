@@ -50,6 +50,17 @@ export class ActiveSessionComponent {
     );
   }
 
+  get availableProjects() {
+    const activePhase = this.session?.phases.find((phase) => !phase.endedAt);
+
+    const activeProjectIds =
+      activePhase?.projectWork.map((work) => work.projectId) ?? [];
+
+    return this.projects().filter(
+      (project) => !activeProjectIds.includes(project.id),
+    );
+  }
+
   addProject(): void {
     if (!this.selectedProjectId) {
       return;

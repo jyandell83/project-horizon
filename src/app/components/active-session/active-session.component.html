@@ -1,35 +1,49 @@
 @if (!session) {
-  <label>
-    Where are you working out today?
-    <input type="text" [(ngModel)]="location" required />
-  </label>
-  <button type="button" (click)="startSession()" [disabled]="!location.trim()">
-    Start Session
-  </button>
+  <div class="session-start">
+    <label>
+      Where are you working out today?
+      <input type="text" [(ngModel)]="location" required />
+    </label>
+
+    <button
+      class="button-primary"
+      type="button"
+      (click)="startSession()"
+      [disabled]="!location.trim()"
+    >
+      Start Session
+    </button>
+  </div>
 } @else {
-  <p>
-    Session in progress at <span>{{ session.location }}</span>
-  </p>
-  @if (session) {
+  <header class="session-header">
+    <p>Session in progress at</p>
+    <h1>{{ session.location }}</h1>
+  </header>
+
+  <section class="session-history">
     <h2>Phases</h2>
 
     @for (phase of session.phases; track phase.id) {
-      <div>
-        <strong>{{ phase.type }}</strong>
+      <div class="phase-summary">
+        <div class="phase-summary__header">
+          <strong>{{ phase.type }}</strong>
 
-        <p>
-          {{ phase.startedAt | date: "shortTime" }}
-          -
-          @if (phase.endedAt) {
-            {{ phase.endedAt | date: "shortTime" }}
-          } @else {
-            In progress
-          }
-        </p>
+          <span>
+            {{ phase.startedAt | date: "shortTime" }}
+            -
+            @if (phase.endedAt) {
+              {{ phase.endedAt | date: "shortTime" }}
+            } @else {
+              In progress
+            }
+          </span>
+        </div>
+
         @if (phase.projectWork.length) {
           @for (project of phase.projectWork; track project.projectId) {
-            <div>
-              {{ getProjectName(project.projectId) }} - {{ project.attempts }}
+            <div class="phase-project">
+              {{ getProjectName(project.projectId) }}
+              <span>{{ project.attempts }} attempts</span>
             </div>
           }
         }
@@ -37,60 +51,79 @@
     } @empty {
       <p>No phases recorded yet.</p>
     }
-  }
+  </section>
 
   @for (phase of session.phases; track phase.id) {
     @if (phase.endedAt === null) {
-      <h2>Current phase: {{ phase.type }}</h2>
-      @for (project of phase.projectWork; track project.projectId) {
-        <span>{{ getProjectName(project.projectId) }}</span>
-        <span>
-          <span>{{ project.attempts }} attempts</span>
-          <button
-            class="button-primary"
-            (click)="updateProjectAttempts(project.projectId, 1)"
-          >
-            +
-          </button>
-          <button
-            class="button-primary"
-            (click)="updateProjectAttempts(project.projectId, -1)"
-          >
-            -
-          </button>
-        </span>
-      }
-      <div class="flex">
+      <section class="current-phase">
+        <div class="current-phase__header">
+          <span class="eyebrow">Current phase</span>
+          <h2>{{ phase.type }}</h2>
+        </div>
+
+        @for (project of phase.projectWork; track project.projectId) {
+          <div class="project-work">
+            <strong>{{ getProjectName(project.projectId) }}</strong>
+
+            <div class="attempt-controls">
+              <span>{{ project.attempts }} attempts</span>
+
+              <button
+                class="button-primary"
+                (click)="updateProjectAttempts(project.projectId, 1)"
+              >
+                +
+              </button>
+
+              <button
+                class="button-primary"
+                (click)="updateProjectAttempts(project.projectId, -1)"
+              >
+                -
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (phase.type === "project") {
+          <div class="add-project">
+            <select [(ngModel)]="selectedProjectId">
+              <option value="">Select Project</option>
+
+              @for (project of availableProjects; track project.id) {
+                <option [ngValue]="project.id">
+                  {{ project.name }}
+                </option>
+              }
+            </select>
+
+            <button (click)="addProject()">Add Project</button>
+          </div>
+        }
+
         <button class="button-danger" type="button" (click)="endPhase()">
           End Phase
         </button>
-      </div>
-      @if (phase.type === "project") {
-        <select [(ngModel)]="selectedProjectId">
-          <option value="">Select Project</option>
-
-          @for (project of availableProjects; track project.id) {
-            <option [ngValue]="project.id">
-              {{ project.name }}
-            </option>
-          }
-        </select>
-
-        <button (click)="addProject()">Add Project</button>
-      }
+      </section>
     }
   }
-  <h2>Start something else</h2>
-  <div class="flex">
-    <button type="button" (click)="startPhase('warm-up')">Warm-up</button>
-    <button type="button" (click)="startPhase('free-climb')">Free Climb</button>
-    <button type="button" (click)="startPhase('project')">Project</button>
-    <button type="button" (click)="startPhase('strength')">Strength</button>
-    <button type="button" (click)="startPhase('cardio')">Cardio</button>
-    <button type="button" (click)="startPhase('other')">Other</button>
-  </div>
 
-  <div>
+  <section class="phase-actions">
+    <h2>Start something else</h2>
+
+    <div class="phase-grid">
+      <button type="button" (click)="startPhase('warm-up')">Warm-up</button>
+      <button type="button" (click)="startPhase('free-climb')">
+        Free Climb
+      </button>
+      <button type="button" (click)="startPhase('project')">Project</button>
+      <button type="button" (click)="startPhase('strength')">Strength</button>
+      <button type="button" (click)="startPhase('cardio')">Cardio</button>
+      <button type="button" (click)="startPhase('other')">Other</button>
+    </div>
+  </section>
+
+  <div class="session-end">
     <button class="button-danger" type="button" (click)="endSession()">
       End Session
     </button>

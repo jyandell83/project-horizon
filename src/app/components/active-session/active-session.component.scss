@@ -1,0 +1,104 @@
+:host {
+  display: block;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+section {
+  margin-bottom: 2rem;
+}
+
+.session-header {
+  margin-bottom: 2rem;
+
+  p {
+    margin: 0;
+    opacity: 0.7;
+  }
+
+  h1 {
+    margin: 0.25rem 0 0;
+  }
+}
+
+.phase-summary {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.phase-summary__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.phase-project {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.current-phase {
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: #f6f0e4;
+}
+
+.current-phase__header {
+  margin-bottom: 1.25rem;
+
+  h2 {
+    margin: 0.25rem 0 0;
+    text-transform: capitalize;
+  }
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+}
+
+.project-work {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.attempt-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attempt-controls button {
+  width: 36px;
+  height: 36px;
+}
+
+.add-project {
+  display: flex;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.add-project select {
+  flex: 1;
+}
+
+.phase-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.session-end {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}

@@ -233,4 +233,11 @@ export class SessionsService {
 
     return completedSession;
   }
+
+  deleteSession(id: string): void {
+    this.sessionsSignal.update((sessions) =>
+      sessions.filter((session) => session.id !== id),
+    );
+    this.saveSessions();
+  }
 }

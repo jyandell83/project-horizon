@@ -20,7 +20,7 @@ export class SessionListComponent {
 
   deleteSession(id: string): void {
     if (confirm('Delete this session?')) {
-      console.log(`Deleted ${id}`);
+      this.sessionsService.deleteSession(id);
     }
   }
 }

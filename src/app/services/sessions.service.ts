@@ -235,6 +235,17 @@ export class SessionsService {
   }
 
   deleteSession(id: string): void {
+    const session = this.sessionsSignal().find((session) => session.id === id);
+
+    if (!session) return;
+
+    for (const phase of session.phases) {
+      for (const work of phase.projectWork) {
+        const amountToSubtract = -work.attempts;
+        this.projectsService.updateAttempts(work.projectId, amountToSubtract);
+      }
+    }
+
     this.sessionsSignal.update((sessions) =>
       sessions.filter((session) => session.id !== id),
     );

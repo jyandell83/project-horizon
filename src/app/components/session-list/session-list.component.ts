@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { SESSIONS } from '../../data/dummy-sessions';
 import { ClimbingSession } from '../../models/session';
@@ -8,7 +9,7 @@ import { SessionsService } from '../../services/sessions.service';
 @Component({
   selector: 'app-session-list',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, RouterLink],
   templateUrl: './session-list.component.html',
   styleUrl: './session-list.component.scss',
 })

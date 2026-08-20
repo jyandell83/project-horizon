@@ -5,6 +5,7 @@ import { SessionsPageComponent } from './pages/sessions-page/sessions-page.compo
 import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
 import { SessionsActivePageComponent } from './pages/sessions-active-page/sessions-active-page.component';
 import { ProjectFormPageComponent } from './pages/project-form-page/project-form-page.component';
+import { SessionEditPageComponent } from './pages/session-edit-page/session-edit-page.component';
 
 export const routes: Routes = [
   {
@@ -27,6 +28,10 @@ export const routes: Routes = [
   {
     path: 'sessions/active',
     component: SessionsActivePageComponent,
+  },
+  {
+    path: 'sessions/:id/edit',
+    component: SessionEditPageComponent,
   },
   {
     path: 'profile',

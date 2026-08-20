@@ -54,7 +54,12 @@
         <button class="button-danger" (click)="deleteSession(session.id)" )>
           Delete Session
         </button>
-        <button class="button-secondary">Edit</button>
+        <button
+          class="button-secondary"
+          [routerLink]="['/sessions', session.id, 'edit']"
+        >
+          Edit
+        </button>
       </div>
     </article>
   }

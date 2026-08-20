@@ -1,2 +1,5 @@
-<p>session-edit-page works!</p>
-<div>{{ session?.location }}</div>
+<form [formGroup]="sessionForm">
+  <input type="text" formControlName="location" />
+  <input type="datetime-local" formControlName="startedAt" />
+  <input type="datetime-local" formControlName="endedAt" />
+</form>

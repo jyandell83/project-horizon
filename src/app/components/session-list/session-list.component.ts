@@ -17,4 +17,10 @@ export class SessionListComponent {
   private readonly sessionsService = inject(SessionsService);
 
   readonly sessions = this.sessionsService.sessions;
+
+  deleteSession(id: string): void {
+    if (confirm('Delete this session?')) {
+      console.log(`Deleted ${id}`);
+    }
+  }
 }

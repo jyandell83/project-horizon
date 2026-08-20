@@ -39,6 +39,10 @@ export class SessionsService {
 
   readonly activeSession = this.activeSessionSignal.asReadonly();
 
+  getSessionById(id: string): ClimbingSession | undefined {
+    return this.sessionsSignal().find((session) => session.id === id);
+  }
+
   private saveSessions(): void {
     localStorage.setItem('sessions', JSON.stringify(this.sessionsSignal()));
   }

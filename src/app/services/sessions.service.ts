@@ -255,4 +255,15 @@ export class SessionsService {
     );
     this.saveSessions();
   }
+
+  editSession(id: string, updates: Partial<ClimbingSession>): void {
+    const sessions = this.sessionsSignal();
+
+    const updatedSessions = sessions.map((session) =>
+      session.id === id ? { ...session, ...updates } : session,
+    );
+
+    this.sessionsSignal.set(updatedSessions);
+    this.saveSessions();
+  }
 }

@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { SessionsService } from '../../services/sessions.service';
 import { ClimbingSession, SessionPhaseType } from '../../models/session';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -29,6 +29,7 @@ export class SessionEditPageComponent {
   private sessionsService = inject(SessionsService);
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
+  private router = inject(Router);
 
   sessionForm = this.fb.nonNullable.group({
     location: [''],
@@ -82,5 +83,21 @@ export class SessionEditPageComponent {
         }
       }
     }
+  }
+
+  saveChanges(): void {
+    if (!this.sessionId) return;
+
+    const formValue = this.sessionForm.getRawValue();
+
+    this.sessionsService.editSession(this.sessionId, {
+      location: formValue.location,
+      startedAt: new Date(formValue.startedAt).toISOString(),
+      endedAt: formValue.endedAt
+        ? new Date(formValue.endedAt).toISOString()
+        : undefined,
+    });
+
+    this.router.navigate(['/sessions']);
   }
 }

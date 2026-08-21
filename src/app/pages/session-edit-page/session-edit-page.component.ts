@@ -10,9 +10,9 @@ import {
 } from '@angular/forms';
 
 type PhaseForm = FormGroup<{
-  type: FormControl<SessionPhaseType | null>;
-  startedAt: FormControl<string | null>;
-  endedAt: FormControl<string | null>;
+  type: FormControl<SessionPhaseType>;
+  startedAt: FormControl<string>;
+  endedAt: FormControl<string>;
 }>;
 
 @Component({
@@ -72,7 +72,7 @@ export class SessionEditPageComponent {
 
         for (const phase of this.session.phases) {
           this.phases.push(
-            this.fb.group({
+            this.fb.nonNullable.group({
               type: [phase.type],
               startedAt: [this.toDateTimeLocal(phase.startedAt)],
               endedAt: [
@@ -86,9 +86,17 @@ export class SessionEditPageComponent {
   }
 
   saveChanges(): void {
-    if (!this.sessionId) return;
+    if (!this.sessionId || !this.session) return;
 
     const formValue = this.sessionForm.getRawValue();
+
+    const updatedPhases = this.session.phases.map((phase, index) => ({
+      ...phase,
+      startedAt: new Date(formValue.phases[index].startedAt).toISOString(),
+      endedAt: formValue.phases[index].endedAt
+        ? new Date(formValue.phases[index].endedAt).toISOString()
+        : null,
+    }));
 
     this.sessionsService.editSession(this.sessionId, {
       location: formValue.location,
@@ -96,6 +104,7 @@ export class SessionEditPageComponent {
       endedAt: formValue.endedAt
         ? new Date(formValue.endedAt).toISOString()
         : undefined,
+      phases: updatedPhases,
     });
 
     this.router.navigate(['/sessions']);

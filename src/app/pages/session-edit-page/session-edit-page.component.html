@@ -1,5 +1,46 @@
 <form [formGroup]="sessionForm">
-  <input type="text" formControlName="location" />
-  <input type="datetime-local" formControlName="startedAt" />
-  <input type="datetime-local" formControlName="endedAt" />
+  <section class="form-section">
+    <label>
+      Location
+      <input type="text" formControlName="location" />
+    </label>
+
+    <label>
+      Session Start
+      <input type="datetime-local" formControlName="startedAt" />
+    </label>
+
+    <label>
+      Session End
+      <input type="datetime-local" formControlName="endedAt" />
+    </label>
+  </section>
+
+  <section class="phases-section">
+    <h2>Activities</h2>
+
+    <div formArrayName="phases">
+      @for (phase of phases.controls; track $index; let i = $index) {
+        <div class="phase-card" [formGroupName]="i">
+          <h3>{{ phase.get("type")?.value }}</h3>
+
+          <label>
+            Start
+            <input type="datetime-local" formControlName="startedAt" />
+          </label>
+
+          <label>
+            End
+            <input type="datetime-local" formControlName="endedAt" />
+          </label>
+        </div>
+      }
+    </div>
+  </section>
+
+  <div class="form-actions">
+    <button type="submit" class="save-button">Save Changes</button>
+
+    <button type="button" class="cancel-button">Cancel</button>
+  </div>
 </form>

@@ -1,12 +1,19 @@
 import { Component, inject } from '@angular/core';
-
 import { SessionsService } from '../../services/sessions.service';
-
-import { ClimbingSession } from '../../models/session';
-
+import { ClimbingSession, SessionPhaseType } from '../../models/session';
 import { ActivatedRoute } from '@angular/router';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+} from '@angular/forms';
 
-import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
+type PhaseForm = FormGroup<{
+  type: FormControl<SessionPhaseType | null>;
+  startedAt: FormControl<string | null>;
+  endedAt: FormControl<string | null>;
+}>;
 
 @Component({
   selector: 'app-session-edit-page',
@@ -23,6 +30,17 @@ export class SessionEditPageComponent {
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
 
+  sessionForm = this.fb.nonNullable.group({
+    location: [''],
+    startedAt: [''],
+    endedAt: [''],
+    phases: this.fb.array<PhaseForm>([]),
+  });
+
+  get phases() {
+    return this.sessionForm.controls.phases;
+  }
+
   private toDateTimeLocal(value: string): string {
     const date = new Date(value);
 
@@ -34,12 +52,6 @@ export class SessionEditPageComponent {
 
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
-
-  sessionForm = this.fb.nonNullable.group({
-    location: [''],
-    startedAt: [''],
-    endedAt: [''],
-  });
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -56,6 +68,18 @@ export class SessionEditPageComponent {
             ? this.toDateTimeLocal(this.session.endedAt)
             : '',
         });
+
+        for (const phase of this.session.phases) {
+          this.phases.push(
+            this.fb.group({
+              type: [phase.type],
+              startedAt: [this.toDateTimeLocal(phase.startedAt)],
+              endedAt: [
+                phase.endedAt ? this.toDateTimeLocal(phase.endedAt) : '',
+              ],
+            }),
+          );
+        }
       }
     }
   }

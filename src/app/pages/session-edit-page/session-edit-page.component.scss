@@ -1,0 +1,94 @@
+:host {
+  display: block;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-section,
+.phases-section {
+  background: #f6f0e4;
+  border: 1px solid #e2cfab;
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.form-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.phases-section h2 {
+  margin-top: 0;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: #2f241b;
+}
+
+input {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #8b908a;
+  border-radius: 6px;
+  background: white;
+  font: inherit;
+}
+
+input:focus {
+  outline: 2px solid #4f9d9d;
+  outline-offset: 2px;
+}
+
+.phase-card {
+  padding: 1rem 0;
+  border-bottom: 1px solid #e2cfab;
+}
+
+.phase-card:last-child {
+  border-bottom: none;
+}
+
+.phase-card h3 {
+  margin: 0 0 0.75rem;
+  text-transform: capitalize;
+  color: #6f7f5c;
+}
+
+.phase-card label + label {
+  margin-top: 0.75rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+button {
+  padding: 0.7rem 1.1rem;
+  border-radius: 6px;
+  border: none;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.save-button {
+  background: #6f7f5c;
+  color: white;
+}
+
+.cancel-button {
+  background: #e6ddc9;
+  color: #2f241b;
+}

@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { SessionsService } from '../../services/sessions.service';
 import { ClimbingSession, SessionPhaseType } from '../../models/session';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -14,6 +15,17 @@ type PhaseForm = FormGroup<{
   startedAt: FormControl<string>;
   endedAt: FormControl<string>;
 }>;
+
+function validTimeRange(control: AbstractControl): ValidationErrors | null {
+  const startedAt = control.get('startedAt')?.value;
+  const endedAt = control.get('endedAt')?.value;
+
+  if (!startedAt || !endedAt) return null;
+
+  return new Date(startedAt) <= new Date(endedAt)
+    ? null
+    : { invalidTimeRange: true };
+}
 
 @Component({
   selector: 'app-session-edit-page',
@@ -72,13 +84,18 @@ export class SessionEditPageComponent {
 
         for (const phase of this.session.phases) {
           this.phases.push(
-            this.fb.nonNullable.group({
-              type: [phase.type],
-              startedAt: [this.toDateTimeLocal(phase.startedAt)],
-              endedAt: [
-                phase.endedAt ? this.toDateTimeLocal(phase.endedAt) : '',
-              ],
-            }),
+            this.fb.nonNullable.group(
+              {
+                type: [phase.type],
+                startedAt: [this.toDateTimeLocal(phase.startedAt)],
+                endedAt: [
+                  phase.endedAt ? this.toDateTimeLocal(phase.endedAt) : '',
+                ],
+              },
+              {
+                validators: validTimeRange,
+              },
+            ),
           );
         }
       }
@@ -87,6 +104,7 @@ export class SessionEditPageComponent {
 
   saveChanges(): void {
     if (!this.sessionId || !this.session) return;
+    if (this.sessionForm.invalid) return;
 
     const formValue = this.sessionForm.getRawValue();
 

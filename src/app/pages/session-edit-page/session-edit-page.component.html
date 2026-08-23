@@ -33,13 +33,21 @@
             End
             <input type="datetime-local" formControlName="endedAt" />
           </label>
+          @if (phase.hasError("invalidTimeRange")) {
+            <p class="error">End time must be after start time.</p>
+          }
         </div>
       }
     </div>
   </section>
 
   <div class="form-actions">
-    <button type="submit" class="save-button" (click)="saveChanges()">
+    <button
+      type="submit"
+      class="save-button"
+      (click)="saveChanges()"
+      [disabled]="sessionForm.invalid"
+    >
       Save Changes
     </button>
 

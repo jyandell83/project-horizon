@@ -95,6 +95,24 @@ export class SessionsService {
     this.saveActiveSession();
   }
 
+  markProjectSent(projectId: number) {
+    const session = this.activeSession();
+
+    if (!session) return;
+
+    const phase = session.phases.find((phase) => !phase.endedAt);
+
+    const projectWork = phase?.projectWork.find(
+      (work) => work.projectId === projectId,
+    );
+
+    if (!projectWork) return;
+
+    projectWork.sent = true;
+
+    this.saveActiveSession();
+  }
+
   startSession(location: string): void {
     if (this.activeSessionSignal()) {
       return;
@@ -222,6 +240,11 @@ export class SessionsService {
         const currentAttempts = attemptsByProject.get(work.projectId) ?? 0;
 
         attemptsByProject.set(work.projectId, currentAttempts + work.attempts);
+        if (work.sent) {
+          this.projectsService.updateProject(work.projectId, {
+            status: 'sent',
+          });
+        }
       }
     }
 

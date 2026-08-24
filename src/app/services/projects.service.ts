@@ -36,17 +36,10 @@ export class ProjectsService {
     this.saveProjects();
   }
 
-  updateProject(updatedProject: Project): void {
+  updateProject(id: number, updates: Partial<Project>) {
     this.projectsSignal.update((projects) =>
       projects.map((project) =>
-        project.id === updatedProject.id
-          ? {
-              ...project,
-              ...updatedProject,
-              attempts: project.attempts,
-              notes: project.notes,
-            }
-          : project,
+        project.id === id ? { ...project, ...updates } : project,
       ),
     );
 

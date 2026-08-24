@@ -31,6 +31,10 @@ export class SessionsActivePageComponent {
     this.sessionsService.updateProjectAttempts(event.projectId, event.change);
   }
 
+  onProjectSent(projectId: number): void {
+    this.sessionsService.markProjectSent(projectId);
+  }
+
   endPhase(): void {
     this.sessionsService.endCurrentPhase();
   }

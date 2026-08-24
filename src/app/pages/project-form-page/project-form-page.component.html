@@ -38,6 +38,15 @@
     </select>
   </label>
 
+  <label>
+    Status
+    <select formControlName="status">
+      <option value="active">Active</option>
+      <option value="retired">Retired</option>
+      <option value="sent">Sent</option>
+    </select>
+  </label>
+
   <button type="submit" [disabled]="projectForm.invalid">Save Project</button>
 </form>
 <button class="button-primary" (click)="saveProject()">Save</button>

@@ -1,3 +1,6 @@
+export type ProjectStatus = 'active' | 'retired' | 'sent';
+export type ProjectEnvironment = 'gym' | 'outdoor';
+
 export interface ProjectNote {
   id: number;
   sessionId?: number;
@@ -10,8 +13,8 @@ export interface Project {
   name: string;
   grade: string;
   location: string;
-  environment: 'gym' | 'outdoor';
-  status: 'active' | 'retired' | 'sent';
+  environment: ProjectEnvironment;
+  status: ProjectStatus;
   attempts: number;
   notes: ProjectNote[];
 }

@@ -28,6 +28,7 @@ export class ActiveSessionComponent {
     projectId: number;
     change: number;
   }>();
+  @Output() projectSent = new EventEmitter<number>();
 
   startSession(): void {
     const location = this.location.trim();
@@ -79,7 +80,7 @@ export class ActiveSessionComponent {
   }
 
   markProjectSent(projectId: number) {
-    console.log(projectId);
+    this.projectSent.emit(projectId);
   }
 
   endPhase(): void {

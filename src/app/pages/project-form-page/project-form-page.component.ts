@@ -9,7 +9,7 @@ import {
 
 import { ProjectsService } from '../../services/projects.service';
 
-import { Project } from '../../models/project';
+import { ProjectStatus } from '../../models/project';
 
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -50,6 +50,7 @@ export class ProjectFormPageComponent {
     environment: new FormControl<'gym' | 'outdoor'>('gym', {
       nonNullable: true,
     }),
+    status: ['active' as ProjectStatus],
   });
 
   saveProject() {
@@ -57,18 +58,16 @@ export class ProjectFormPageComponent {
       this.projectForm.markAllAsTouched();
       return;
     }
+
     const formValue = this.projectForm.getRawValue();
 
     if (this.isEditing && this.projectId) {
-      this.projectsService.updateProject({
-        id: this.projectId,
+      this.projectsService.updateProject(this.projectId, {
         name: formValue.name,
         grade: formValue.grade,
         location: formValue.location,
         environment: formValue.environment,
-        status: 'active',
-        attempts: 0,
-        notes: [],
+        status: formValue.status,
       });
     } else {
       this.projectsService.addProject({
@@ -76,7 +75,7 @@ export class ProjectFormPageComponent {
         grade: formValue.grade,
         location: formValue.location,
         environment: formValue.environment,
-        status: 'active',
+        status: formValue.status,
         attempts: 0,
         notes: [],
       });

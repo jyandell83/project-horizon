@@ -78,6 +78,10 @@ export class ActiveSessionComponent {
     });
   }
 
+  markProjectSent(projectId: number) {
+    console.log(projectId);
+  }
+
   endPhase(): void {
     this.phaseEnd.emit();
   }

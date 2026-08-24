@@ -82,6 +82,13 @@
                 -
               </button>
             </div>
+            <button
+              type="button"
+              (click)="markProjectSent(project.projectId)"
+              [disabled]="project.sent"
+            >
+              {{ project.sent ? "Sent!" : "Mark Sent" }}
+            </button>
           </div>
         }
 

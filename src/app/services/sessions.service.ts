@@ -69,6 +69,7 @@ export class SessionsService {
     currentPhase.projectWork.push({
       projectId,
       attempts: 0,
+      sent: false,
       notes: [],
     });
     this.saveActiveSession();

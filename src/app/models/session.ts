@@ -11,6 +11,7 @@ export type SessionPhaseType =
 export interface ProjectWork {
   projectId: number;
   attempts: number;
+  sent: boolean;
   notes: ProjectNote[];
 }
 

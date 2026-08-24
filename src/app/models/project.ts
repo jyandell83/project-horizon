@@ -11,7 +11,7 @@ export interface Project {
   grade: string;
   location: string;
   environment: 'gym' | 'outdoor';
-  status: 'active' | 'paused' | 'sent';
+  status: 'active' | 'retired' | 'sent';
   attempts: number;
   notes: ProjectNote[];
 }

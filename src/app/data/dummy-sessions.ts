@@ -23,6 +23,7 @@ export const SESSIONS: ClimbingSession[] = [
           {
             projectId: 1,
             attempts: 6,
+            sent: false,
             notes: [
               {
                 id: 1,
@@ -39,6 +40,7 @@ export const SESSIONS: ClimbingSession[] = [
           {
             projectId: 2,
             attempts: 2,
+            sent: false,
             notes: [
               {
                 id: 3,

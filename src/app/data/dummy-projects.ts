@@ -33,7 +33,7 @@ export const PROJECTS: Project[] = [
     grade: 'V4',
     location: 'Stoney Point',
     environment: 'outdoor',
-    status: 'paused',
+    status: 'retired',
     attempts: 7,
     notes: [
       {

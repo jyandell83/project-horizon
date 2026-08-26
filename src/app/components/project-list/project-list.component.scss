@@ -36,6 +36,52 @@
   line-height: 1.6;
 }
 
+.beta-toggle {
+  align-self: flex-start;
+  width: fit-content;
+}
+
+.beta-log {
+  margin-top: 0.75rem;
+  border-top: 1px solid #d6d2ca;
+
+  &__header {
+    padding: 0.6rem 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__entry {
+    position: relative;
+    padding: 0.75rem 0;
+    border-top: 1px solid #e3dfd7;
+  }
+
+  &__date {
+    margin-bottom: 0.25rem;
+    font-size: 0.7rem;
+    color: #777;
+    font-family: monospace;
+  }
+
+  &__note {
+    margin: 0;
+    padding-right: 4rem;
+    line-height: 1.5;
+  }
+
+  &__actions {
+    position: absolute;
+    top: 0.65rem;
+    right: 0;
+
+    display: flex;
+    gap: 0.2rem;
+  }
+}
+
 .attempts {
   display: flex;
   align-items: center;

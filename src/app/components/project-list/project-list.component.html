@@ -1,6 +1,6 @@
 @for (project of projects(); track project.id) {
   <article class="card project-card">
-    <div class="flex justify-between">
+    <div class="flex justify-between align-items-start">
       <div class="flex">
         <div class="project-card__header flex-column">
           <h3>{{ project.name }}</h3>
@@ -37,42 +37,87 @@
       </div>
 
       <div class="button-row">
-        <button class="button-danger" (click)="deleteProject(project.id)">
-          Delete Project
-        </button>
         <button
-          class="button-secondary"
+          class="button-text button-primary"
           [routerLink]="['/projects', project.id, 'edit']"
         >
+          <fa-icon [icon]="faEdit"></fa-icon>
           Edit
+        </button>
+
+        <button
+          class="button-text button-danger"
+          (click)="deleteProject(project.id)"
+        >
+          <fa-icon [icon]="faTrash"></fa-icon>
+          Delete
         </button>
       </div>
     </div>
 
-    @for (note of project.notes; track note.id) {
-      <div>
-        <p class="project-card__notes">{{ note.body }}</p>
-        <span>{{ note.date }}</span>
-        <button
-          class="button-primary"
-          (click)="startEditingNote(project.id, note)"
-        >
-          <fa-icon [icon]="faEdit"></fa-icon>
-        </button>
-        <button class="button-danger" (click)="deleteNote(project.id, note.id)">
-          <fa-icon [icon]="faTrash"></fa-icon>
-        </button>
-      </div>
-    }
-    @if (editingNoteProjectId !== project.id) {
-      <button (click)="startAddingNote(project.id)" class="button-secondary">
-        Add Note
-      </button>
-    } @else {
-      <textarea [(ngModel)]="noteText" placeholder="Add a note..."></textarea>
+    <button
+      (click)="toggleBeta(project.id)"
+      class="button-text button-secondary beta-toggle"
+    >
+      {{ openBetaProjectIds.has(project.id) ? "Hide Beta" : "Show Beta" }}
+      <fa-icon
+        [icon]="
+          openBetaProjectIds.has(project.id) ? faChevronUp : faChevronDown
+        "
+      ></fa-icon>
+    </button>
 
-      <button (click)="saveNote(project)">Save</button>
-      <button (click)="cancelNote()">Cancel</button>
+    @if (openBetaProjectIds.has(project.id)) {
+      <div class="beta-log">
+        <div class="beta-log__header">
+          <span>Beta Log</span>
+        </div>
+        @for (note of project.notes; track note.id) {
+          <div class="beta-log__entry">
+            <div class="beta-log__date">
+              {{ note.date | date: "MM-dd-yyyy" }}
+            </div>
+
+            <p class="beta-log__note">
+              {{ note.body }}
+            </p>
+
+            <div class="beta-log__actions">
+              <button
+                class="button-icon button-primary"
+                aria-label="Edit note"
+                (click)="startEditingNote(project.id, note)"
+              >
+                <fa-icon [icon]="faEdit"></fa-icon>
+              </button>
+
+              <button
+                class="button-icon button-danger"
+                aria-label="Delete note"
+                (click)="deleteNote(project.id, note.id)"
+              >
+                <fa-icon [icon]="faTrash"></fa-icon>
+              </button>
+            </div>
+          </div>
+        }
+        @if (editingNoteProjectId !== project.id) {
+          <button
+            (click)="startAddingNote(project.id)"
+            class="button-secondary"
+          >
+            Add Note
+          </button>
+        } @else {
+          <textarea
+            [(ngModel)]="noteText"
+            placeholder="Add a note..."
+          ></textarea>
+
+          <button (click)="saveNote(project)">Save</button>
+          <button (click)="cancelNote()">Cancel</button>
+        }
+      </div>
     }
   </article>
 }

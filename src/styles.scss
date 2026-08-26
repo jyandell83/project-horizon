@@ -104,9 +104,8 @@ p {
 }
 
 button {
-  margin-top: 1.5rem;
   padding: 0.85rem 1.25rem;
-  border-radius: 999px;
+  border-radius: var(--border-radius);
   border: none;
   cursor: pointer;
   font-weight: 700;
@@ -135,7 +134,6 @@ button {
   color: var(--color-surface);
 
   border: none;
-  border-radius: var(--border-radius);
 
   padding: 0.75rem 1.5rem;
 
@@ -191,6 +189,24 @@ button {
   background: #a7522c;
 }
 
+.button-text {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  padding: 0.4rem;
+  border: none;
+
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.button-icon {
+  padding: 0.2rem;
+  font-size: 0.8rem;
+}
+
 .button-row {
   display: flex;
   justify-content: flex-end;
@@ -224,4 +240,8 @@ button {
 
 .justify-between {
   justify-content: space-between;
+}
+
+.align-items-start {
+  align-items: start;
 }

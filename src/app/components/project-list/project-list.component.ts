@@ -4,17 +4,22 @@ import { RouterLink } from '@angular/router';
 import { Project } from '../../models/project';
 import { ProjectNote } from '../../models/project';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 import { ProjectsService } from '../../services/projects.service';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPenToSquare,
+  faChevronDown,
+  faChevronUp,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [RouterLink, FormsModule, FontAwesomeModule],
+  imports: [RouterLink, FormsModule, FontAwesomeModule, DatePipe],
   templateUrl: './project-list.component.html',
   styleUrl: './project-list.component.scss',
 })
@@ -25,8 +30,11 @@ export class ProjectListComponent {
   editingNoteProjectId: number | null = null;
   noteText = '';
   noteBeingEdited: ProjectNote | null = null;
+  openBetaProjectIds = new Set<number>();
   faTrash = faTrash;
   faEdit = faPenToSquare;
+  faChevronUp = faChevronUp;
+  faChevronDown = faChevronDown;
 
   updateAttempts(id: number, change: number): void {
     this.projectsService.updateAttempts(id, change);
@@ -78,6 +86,14 @@ export class ProjectListComponent {
   deleteNote(projectId: number, noteId: number) {
     if (confirm('Delete this note?')) {
       this.projectsService.deleteNote(projectId, noteId);
+    }
+  }
+
+  toggleBeta(projectId: number) {
+    if (this.openBetaProjectIds.has(projectId)) {
+      this.openBetaProjectIds.delete(projectId);
+    } else {
+      this.openBetaProjectIds.add(projectId);
     }
   }
 }

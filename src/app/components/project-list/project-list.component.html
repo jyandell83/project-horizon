@@ -104,18 +104,34 @@
         @if (editingNoteProjectId !== project.id) {
           <button
             (click)="startAddingNote(project.id)"
-            class="button-secondary"
+            class="button-secondary button-text"
           >
+            <fa-icon [icon]="faPlus"></fa-icon>
             Add Note
           </button>
         } @else {
-          <textarea
-            [(ngModel)]="noteText"
-            placeholder="Add a note..."
-          ></textarea>
-
-          <button (click)="saveNote(project)">Save</button>
-          <button (click)="cancelNote()">Cancel</button>
+          <div class="flex">
+            <textarea
+              [(ngModel)]="noteText"
+              placeholder="Add a note..."
+            ></textarea>
+            <div class="flex flex-column align-items-start">
+              <button
+                (click)="cancelNote()"
+                class="button-icon button-danger"
+                aria-label="Cancel Adding Note"
+              >
+                <fa-icon [icon]="faXmark"></fa-icon>
+              </button>
+              <button
+                (click)="saveNote(project)"
+                class="button-icon button-primary"
+                aria-label="Save Note"
+              >
+                <fa-icon [icon]="faCheck"></fa-icon>
+              </button>
+            </div>
+          </div>
         }
       </div>
     }

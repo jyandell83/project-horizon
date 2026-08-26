@@ -14,6 +14,9 @@ import {
   faChevronDown,
   faChevronUp,
   faTrash,
+  faCheck,
+  faXmark,
+  faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -35,6 +38,9 @@ export class ProjectListComponent {
   faEdit = faPenToSquare;
   faChevronUp = faChevronUp;
   faChevronDown = faChevronDown;
+  faCheck = faCheck;
+  faXmark = faXmark;
+  faPlus = faPlus;
 
   updateAttempts(id: number, change: number): void {
     this.projectsService.updateAttempts(id, change);

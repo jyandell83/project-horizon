@@ -24,7 +24,9 @@
       </div>
     }
     @if (editingNoteProjectId !== project.id) {
-      <button (click)="startAddingNote(project.id)">Add Note</button>
+      <button (click)="startAddingNote(project.id)" class="button-secondary">
+        Add Note
+      </button>
     } @else {
       <textarea [(ngModel)]="noteText" placeholder="Add a note..."></textarea>
 

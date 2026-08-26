@@ -115,6 +115,21 @@ button {
   border: 1px solid var(--color-tertiary);
 }
 
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  padding: 1.5rem;
+
+  background: var(--color-surface);
+  border: 1px solid rgba(47, 36, 27, 0.1);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+
+  margin: 1rem;
+}
+
 .button-primary {
   background: var(--color-primary);
   color: var(--color-surface);
@@ -190,12 +205,23 @@ button {
     margin-top: 0;
   }
 }
-.flex {
-  display: flex;
-}
 
 .error {
   color: var(--color-danger);
   font-size: 0.85rem;
   margin-top: 0.25rem;
+}
+
+/*Utilities put in own file eventually*/
+
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.justify-between {
+  justify-content: space-between;
 }

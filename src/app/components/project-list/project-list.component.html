@@ -1,13 +1,54 @@
 @for (project of projects(); track project.id) {
-  <article class="project-card">
-    <div class="project-card__header">
-      <div>
-        <h3>{{ project.name }}</h3>
-        <p>{{ project.location }}</p>
+  <article class="card project-card">
+    <div class="flex justify-between">
+      <div class="flex">
+        <div class="project-card__header flex-column">
+          <h3>{{ project.name }}</h3>
+          <p>{{ project.location }}</p>
+          <span class="project-badge">
+            {{ project.grade }} &middot; {{ project.status }}
+          </span>
+        </div>
       </div>
 
-      <span class="project-card__grade">{{ project.grade }}</span>
+      <div class="attempts">
+        <span class="attempts__label">Attempts</span>
+
+        <div class="attempts__controls">
+          <button
+            type="button"
+            class="attempts__button"
+            aria-label="Decrease attempts"
+            (click)="updateAttempts(project.id, -1)"
+          >
+            −
+          </button>
+
+          <span class="attempts__count">{{ project.attempts }}</span>
+          <button
+            type="button"
+            class="attempts__button"
+            aria-label="Increase attempts"
+            (click)="updateAttempts(project.id, 1)"
+          >
+            +
+          </button>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="button-danger" (click)="deleteProject(project.id)">
+          Delete Project
+        </button>
+        <button
+          class="button-secondary"
+          [routerLink]="['/projects', project.id, 'edit']"
+        >
+          Edit
+        </button>
+      </div>
     </div>
+
     @for (note of project.notes; track note.id) {
       <div>
         <p class="project-card__notes">{{ note.body }}</p>
@@ -33,30 +74,5 @@
       <button (click)="saveNote(project)">Save</button>
       <button (click)="cancelNote()">Cancel</button>
     }
-
-    <div class="project-card__meta">
-      <span>
-        <span>{{ project.attempts }} attempts</span>
-        <button class="button-primary" (click)="updateAttempts(project.id, 1)">
-          +
-        </button>
-        <button class="button-primary" (click)="updateAttempts(project.id, -1)">
-          -
-        </button>
-      </span>
-
-      <span>{{ project.status }}</span>
-    </div>
-    <div class="button-row">
-      <button class="button-danger" (click)="deleteProject(project.id)">
-        Delete Project
-      </button>
-      <button
-        class="button-secondary"
-        [routerLink]="['/projects', project.id, 'edit']"
-      >
-        Edit
-      </button>
-    </div>
   </article>
 }

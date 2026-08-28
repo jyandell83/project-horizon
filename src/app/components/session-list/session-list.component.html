@@ -26,7 +26,7 @@
         </p>
       </div>
 
-      <h3>Session Phases</h3>
+      <h3>Workout Blocks</h3>
 
       <ul class="session-phases">
         @for (phase of session.phases; track phase.id) {
@@ -36,6 +36,17 @@
             <div>
               {{ phase.startedAt | date: "shortTime" }} -
               {{ phase.endedAt | date: "shortTime" }}
+            </div>
+
+            <div>
+              @if (phase.type === "project") {
+                @for (project of phase.projectWork; track project.projectId) {
+                  <div>
+                    {{ getProjectName(project.projectId) }} -
+                    {{ project.attempts }} attempts
+                  </div>
+                }
+              }
             </div>
           </li>
         }

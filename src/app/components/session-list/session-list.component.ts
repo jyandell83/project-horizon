@@ -5,6 +5,7 @@ import { SESSIONS } from '../../data/dummy-sessions';
 import { ClimbingSession } from '../../models/session';
 
 import { SessionsService } from '../../services/sessions.service';
+import { ProjectsService } from '../../services/projects.service';
 
 @Component({
   selector: 'app-session-list',
@@ -16,6 +17,7 @@ import { SessionsService } from '../../services/sessions.service';
 export class SessionListComponent {
   // sessions: ClimbingSession[] = SESSIONS;
   private readonly sessionsService = inject(SessionsService);
+  private readonly projectsService = inject(ProjectsService);
 
   readonly sessions = this.sessionsService.sessions;
 
@@ -23,5 +25,11 @@ export class SessionListComponent {
     if (confirm('Delete this session?')) {
       this.sessionsService.deleteSession(id);
     }
+  }
+
+  getProjectName(projectId: number): string {
+    return (
+      this.projectsService.getProjectById(projectId)?.name ?? 'Unknown Project'
+    );
   }
 }

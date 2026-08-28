@@ -114,6 +114,33 @@ button {
   border: 1px solid var(--color-tertiary);
 }
 
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+input {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--color-tertiary);
+  border-radius: 6px;
+  background: white;
+  font: inherit;
+}
+
+input:focus {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
 .card {
   display: flex;
   flex-direction: column;

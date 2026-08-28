@@ -1,5 +1,5 @@
 <form [formGroup]="sessionForm">
-  <section class="form-section">
+  <section class="card">
     <label>
       Location
       <input type="text" formControlName="location" />
@@ -16,12 +16,12 @@
     </label>
   </section>
 
-  <section class="phases-section">
+  <section class="card">
     <h2>Activities</h2>
 
     <div formArrayName="phases">
       @for (phase of phases.controls; track $index; let i = $index) {
-        <div class="phase-card" [formGroupName]="i">
+        <div [formGroupName]="i">
           <h3>{{ phase.get("type")?.value }}</h3>
 
           <label>
@@ -41,16 +41,16 @@
     </div>
   </section>
 
-  <div class="form-actions">
+  <div>
     <button
       type="submit"
-      class="save-button"
+      class="button-primary"
       (click)="saveChanges()"
       [disabled]="sessionForm.invalid"
     >
       Save Changes
     </button>
 
-    <button type="button" class="cancel-button">Cancel</button>
+    <button type="button" class="button-danger">Cancel</button>
   </div>
 </form>

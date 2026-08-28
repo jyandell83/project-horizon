@@ -1,52 +1,59 @@
-<form [formGroup]="projectForm" (ngSubmit)="saveProject()">
-  <label>
-    Project Name
-    <input type="text" formControlName="name" />
-  </label>
-  @if (projectForm.controls.name.invalid && projectForm.controls.name.touched) {
-    <p class="error">Project name is required.</p>
-  }
+<div class="card">
+  <form [formGroup]="projectForm" (ngSubmit)="saveProject()">
+    <label>
+      Project Name
+      <input type="text" formControlName="name" />
+    </label>
+    @if (
+      projectForm.controls.name.invalid && projectForm.controls.name.touched
+    ) {
+      <p class="error">Project name is required.</p>
+    }
 
-  <label>
-    Grade
-    <select formControlName="grade">
-      <option value="VB">VB</option>
-      <option value="V0">V0</option>
-      <option value="V1">V1</option>
-      <option value="V2">V2</option>
-      <option value="V3">V3</option>
-      <option value="V4">V4</option>
-      <option value="V5">V5</option>
-      <option value="V6">V6</option>
-      <option value="V7">V7</option>
-      <option value="V8">V8</option>
-      <option value="V9">V9</option>
-      <option value="V10">V10</option>
-    </select>
-  </label>
+    <label>
+      Grade
+      <select formControlName="grade">
+        <option value="VB">VB</option>
+        <option value="V0">V0</option>
+        <option value="V1">V1</option>
+        <option value="V2">V2</option>
+        <option value="V3">V3</option>
+        <option value="V4">V4</option>
+        <option value="V5">V5</option>
+        <option value="V6">V6</option>
+        <option value="V7">V7</option>
+        <option value="V8">V8</option>
+        <option value="V9">V9</option>
+        <option value="V10">V10</option>
+      </select>
+    </label>
 
-  <label>
-    Location
-    <input type="text" formControlName="location" />
-  </label>
+    <label>
+      Location
+      <input type="text" formControlName="location" />
+    </label>
 
-  <label>
-    Environment
-    <select formControlName="environment">
-      <option value="gym">Gym</option>
-      <option value="outdoor">Outdoor</option>
-    </select>
-  </label>
+    <label>
+      Environment
+      <select formControlName="environment">
+        <option value="gym">Gym</option>
+        <option value="outdoor">Outdoor</option>
+      </select>
+    </label>
 
-  <label>
-    Status
-    <select formControlName="status">
-      <option value="active">Active</option>
-      <option value="retired">Retired</option>
-      <option value="sent">Sent</option>
-    </select>
-  </label>
-
-  <button type="submit" [disabled]="projectForm.invalid">Save Project</button>
-</form>
-<button class="button-primary" (click)="saveProject()">Save</button>
+    <label>
+      Status
+      <select formControlName="status">
+        <option value="active">Active</option>
+        <option value="retired">Retired</option>
+        <option value="sent">Sent</option>
+      </select>
+    </label>
+    <div class="button-row">
+      <button type="submit" [disabled]="projectForm.invalid">
+        Save Project
+      </button>
+      <button class="button-danger">Cancel</button>
+    </div>
+  </form>
+</div>

@@ -83,4 +83,8 @@ export class ProjectFormPageComponent {
 
     this.router.navigate(['/projects']);
   }
+
+  cancelAddingProject(): void {
+    this.router.navigate(['/projects']);
+  }
 }

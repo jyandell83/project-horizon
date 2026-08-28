@@ -1,5 +1,5 @@
-<form [formGroup]="sessionForm">
-  <section class="card">
+<div class="card">
+  <form [formGroup]="sessionForm">
     <label>
       Location
       <input type="text" formControlName="location" />
@@ -14,9 +14,7 @@
       Session End
       <input type="datetime-local" formControlName="endedAt" />
     </label>
-  </section>
 
-  <section class="card">
     <h2>Activities</h2>
 
     <div formArrayName="phases">
@@ -39,18 +37,18 @@
         </div>
       }
     </div>
-  </section>
 
-  <div>
-    <button
-      type="submit"
-      class="button-primary"
-      (click)="saveChanges()"
-      [disabled]="sessionForm.invalid"
-    >
-      Save Changes
-    </button>
+    <div class="button-row">
+      <button
+        type="submit"
+        class="button-primary"
+        (click)="saveChanges()"
+        [disabled]="sessionForm.invalid"
+      >
+        Save Changes
+      </button>
 
-    <button type="button" class="button-danger">Cancel</button>
-  </div>
-</form>
+      <button type="button" class="button-danger">Cancel</button>
+    </div>
+  </form>
+</div>

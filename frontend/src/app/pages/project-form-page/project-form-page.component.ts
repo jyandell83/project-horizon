@@ -70,15 +70,29 @@ export class ProjectFormPageComponent {
         status: formValue.status,
       });
     } else {
-      this.projectsService.addProject({
-        name: formValue.name,
-        grade: formValue.grade,
-        location: formValue.location,
-        environment: formValue.environment,
-        status: formValue.status,
-        attempts: 0,
-        notes: [],
-      });
+      //OLD WAY BEFORE DB
+      // this.projectsService.addProject({
+      //   name: formValue.name,
+      //   grade: formValue.grade,
+      //   location: formValue.location,
+      //   environment: formValue.environment,
+      //   status: formValue.status,
+      //   attempts: 0,
+      //   notes: [],
+      // });
+      this.projectsService
+        .addProject({
+          name: formValue.name,
+          grade: formValue.grade,
+          location: formValue.location,
+          environment: formValue.environment,
+          status: 'active',
+          attempts: 0,
+          notes: [],
+        })
+        .subscribe((newProject) => {
+          console.log('Saved project:', newProject);
+        });
     }
 
     this.router.navigate(['/projects']);

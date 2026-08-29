@@ -1,5 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { Project, ProjectNote } from '../models/project';
+import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs';
 
 import { PROJECTS } from '../data/dummy-projects';
 
@@ -7,6 +9,7 @@ import { PROJECTS } from '../data/dummy-projects';
   providedIn: 'root',
 })
 export class ProjectsService {
+  private http = inject(HttpClient);
   constructor() {
     const storedProjects = localStorage.getItem('projects');
     if (storedProjects) {
@@ -26,14 +29,25 @@ export class ProjectsService {
     return this.projectsSignal().find((project) => project.id === id);
   }
 
-  addProject(project: Omit<Project, 'id'>): void {
-    const newProject: Project = {
-      ...project,
-      id: Date.now(),
-    };
+  // OLD WAY BEFORE SQL DB
+  // addProject(project: Omit<Project, 'id'>): void {
+  //   const newProject: Project = {
+  //     ...project,
+  //     id: Date.now(),
+  //   };
 
-    this.projectsSignal.update((projects) => [...projects, newProject]);
-    this.saveProjects();
+  //   this.projectsSignal.update((projects) => [...projects, newProject]);
+  //   this.saveProjects();
+  // }
+
+  addProject(project: Omit<Project, 'id'>) {
+    return this.http
+      .post<Project>('http://localhost:3000/api/projects', project)
+      .pipe(
+        tap((newProject) => {
+          this.projectsSignal.update((projects) => [...projects, newProject]);
+        }),
+      );
   }
 
   updateProject(id: number, updates: Partial<Project>) {

@@ -41,13 +41,11 @@ export class ProjectsService {
   // }
 
   addProject(project: Omit<Project, 'id'>) {
-    return this.http
-      .post<Project>('http://localhost:3000/api/projects', project)
-      .pipe(
-        tap((newProject) => {
-          this.projectsSignal.update((projects) => [...projects, newProject]);
-        }),
-      );
+    return this.http.post<Project>('/api/projects', project).pipe(
+      tap((newProject) => {
+        this.projectsSignal.update((projects) => [...projects, newProject]);
+      }),
+    );
   }
 
   updateProject(id: number, updates: Partial<Project>) {

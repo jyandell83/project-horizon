@@ -70,9 +70,14 @@ export class ProjectFormPageComponent {
           environment: formValue.environment,
           status: formValue.status,
         })
-        .subscribe((updatedProject) => {
-          console.log('Updated project:', updatedProject);
-          this.router.navigate(['/projects']);
+        .subscribe({
+          next: (updatedProject) => {
+            console.log('Updated project:', updatedProject);
+            this.router.navigate(['/projects']);
+          },
+          error: (error) => {
+            console.error('Failed to update project:', error);
+          },
         });
     } else {
       //OLD WAY BEFORE DB
@@ -95,9 +100,14 @@ export class ProjectFormPageComponent {
           attempts: 0,
           notes: [],
         })
-        .subscribe((newProject) => {
-          console.log('Saved project:', newProject);
-          this.router.navigate(['/projects']);
+        .subscribe({
+          next: (newProject) => {
+            console.log('Saved project:', newProject);
+            this.router.navigate(['/projects']);
+          },
+          error: (error) => {
+            console.error('Failed to create project:', error);
+          },
         });
     }
   }

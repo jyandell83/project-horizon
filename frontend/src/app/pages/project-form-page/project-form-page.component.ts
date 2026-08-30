@@ -62,13 +62,18 @@ export class ProjectFormPageComponent {
     const formValue = this.projectForm.getRawValue();
 
     if (this.isEditing && this.projectId) {
-      this.projectsService.updateProject(this.projectId, {
-        name: formValue.name,
-        grade: formValue.grade,
-        location: formValue.location,
-        environment: formValue.environment,
-        status: formValue.status,
-      });
+      this.projectsService
+        .updateProject(this.projectId, {
+          name: formValue.name,
+          grade: formValue.grade,
+          location: formValue.location,
+          environment: formValue.environment,
+          status: formValue.status,
+        })
+        .subscribe((updatedProject) => {
+          console.log('Updated project:', updatedProject);
+          this.router.navigate(['/projects']);
+        });
     } else {
       //OLD WAY BEFORE DB
       // this.projectsService.addProject({
@@ -92,10 +97,9 @@ export class ProjectFormPageComponent {
         })
         .subscribe((newProject) => {
           console.log('Saved project:', newProject);
+          this.router.navigate(['/projects']);
         });
     }
-
-    this.router.navigate(['/projects']);
   }
 
   cancelAddingProject(): void {

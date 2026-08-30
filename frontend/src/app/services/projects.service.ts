@@ -3,23 +3,28 @@ import { Project, ProjectNote } from '../models/project';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
 
-import { PROJECTS } from '../data/dummy-projects';
-
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectsService {
   private http = inject(HttpClient);
-  constructor() {
-    const storedProjects = localStorage.getItem('projects');
-    if (storedProjects) {
-      this.projectsSignal.set(JSON.parse(storedProjects) as Project[]);
-    } else {
-      this.projectsSignal.set([...PROJECTS]);
-    }
-  }
+
   private readonly projectsSignal = signal<Project[]>([]);
   readonly projects = this.projectsSignal.asReadonly();
+  constructor() {
+    this.loadProjects();
+  }
+
+  private loadProjects(): void {
+    this.http.get<Project[]>('/api/projects').subscribe({
+      next: (projects) => {
+        this.projectsSignal.set(projects);
+      },
+      error: (error) => {
+        console.error('Failed to load projects', error);
+      },
+    });
+  }
 
   private saveProjects(): void {
     localStorage.setItem('projects', JSON.stringify(this.projectsSignal()));
@@ -49,13 +54,15 @@ export class ProjectsService {
   }
 
   updateProject(id: number, updates: Partial<Project>) {
-    this.projectsSignal.update((projects) =>
-      projects.map((project) =>
-        project.id === id ? { ...project, ...updates } : project,
-      ),
+    return this.http.put<Project>(`/api/projects/${id}`, updates).pipe(
+      tap((updatedProject) => {
+        this.projectsSignal.update((projects) =>
+          projects.map((project) =>
+            project.id === id ? updatedProject : project,
+          ),
+        );
+      }),
     );
-
-    this.saveProjects();
   }
 
   updateAttempts(id: number, change: number): void {

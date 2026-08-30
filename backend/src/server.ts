@@ -15,9 +15,14 @@ app.use(
 app.use(express.json());
 
 app.get('/api/projects', async (_req, res) => {
-  const result = await pool.query('SELECT * FROM projects');
+  const result = await pool.query('SELECT * FROM projects ORDER BY id');
 
-  res.json(result.rows);
+  const projects = result.rows.map((project) => ({
+    ...project,
+    notes: [],
+  }));
+
+  res.json(projects);
 });
 
 app.post('/api/projects', async (req, res) => {
@@ -36,6 +41,33 @@ app.post('/api/projects', async (req, res) => {
   };
 
   res.status(201).json(newProject);
+});
+
+app.put('/api/projects/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  const { name, grade, location, environment, status } = req.body;
+
+  const result = await pool.query(
+    `
+    UPDATE projects
+    SET
+      name = $1,
+      grade = $2,
+      location = $3,
+      environment = $4,
+      status = $5
+    WHERE id = $6
+    RETURNING *
+    `,
+    [name, grade, location, environment, status, id],
+  );
+
+  const updatedProject = {
+    ...result.rows[0],
+    notes: [],
+  };
+
+  res.json(updatedProject);
 });
 
 app.get('/api/hello', (_req, res) => {

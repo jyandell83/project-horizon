@@ -89,7 +89,11 @@ export class ProjectListComponent {
         this.noteText,
       );
     } else {
-      this.projectsService.addNote(project.id, this.noteText);
+      this.projectsService.addNote(project.id, this.noteText).subscribe({
+        error: (error) => {
+          console.error('Failed to add note:', error);
+        },
+      });
     }
 
     this.editingNoteProjectId = null;

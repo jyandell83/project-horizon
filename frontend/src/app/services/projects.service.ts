@@ -79,24 +79,25 @@ export class ProjectsService {
       );
   }
 
-  addNote(projectId: number, body: string): void {
-    const newNote: ProjectNote = {
-      id: Date.now(),
-      date: new Date().toISOString(),
-      body: body.trim(),
-    };
-
-    this.projectsSignal.update((projects) =>
-      projects.map((project) =>
-        project.id === projectId
-          ? {
-              ...project,
-              notes: [...project.notes, newNote],
-            }
-          : project,
-      ),
-    );
-    this.saveProjects();
+  addNote(projectId: number, body: string) {
+    return this.http
+      .post<ProjectNote>(`/api/projects/${projectId}/notes`, {
+        body: body.trim(),
+      })
+      .pipe(
+        tap((newNote) => {
+          this.projectsSignal.update((projects) =>
+            projects.map((project) =>
+              project.id === projectId
+                ? {
+                    ...project,
+                    notes: [...project.notes, newNote],
+                  }
+                : project,
+            ),
+          );
+        }),
+      );
   }
 
   deleteNote(projectId: number, noteId: number): void {

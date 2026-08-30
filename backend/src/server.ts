@@ -15,11 +15,21 @@ app.use(
 app.use(express.json());
 
 app.get('/api/projects', async (_req, res) => {
-  const result = await pool.query('SELECT * FROM projects ORDER BY id');
+  const projectsResult = await pool.query('SELECT * FROM projects ORDER BY id');
 
-  const projects = result.rows.map((project) => ({
+  const notesResult = await pool.query(
+    'SELECT * FROM project_notes ORDER BY created_at',
+  );
+
+  const projects = projectsResult.rows.map((project) => ({
     ...project,
-    notes: [],
+    notes: notesResult.rows
+      .filter((note) => note.project_id === project.id)
+      .map((note) => ({
+        id: note.id,
+        body: note.body,
+        date: note.created_at,
+      })),
   }));
 
   res.json(projects);
@@ -109,6 +119,28 @@ app.delete('/api/projects/:id', async (req, res) => {
   }
 
   res.status(204).send();
+});
+
+app.post('/api/projects/:id/notes', async (req, res) => {
+  const projectId = Number(req.params.id);
+  const { body } = req.body;
+
+  const result = await pool.query(
+    `
+    INSERT INTO project_notes (project_id, body)
+    VALUES ($1, $2)
+    RETURNING *
+    `,
+    [projectId, body],
+  );
+
+  const note = result.rows[0];
+
+  res.status(201).json({
+    id: note.id,
+    body: note.body,
+    date: note.created_at,
+  });
 });
 
 app.get('/api/hello', (_req, res) => {

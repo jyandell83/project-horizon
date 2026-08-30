@@ -43,7 +43,11 @@ export class ProjectListComponent {
   faPlus = faPlus;
 
   updateAttempts(id: number, change: number): void {
-    this.projectsService.updateAttempts(id, change);
+    this.projectsService.updateAttempts(id, change).subscribe({
+      error: (error) => {
+        console.error('Failed to update attempts:', error);
+      },
+    });
   }
 
   deleteProject(id: number): void {

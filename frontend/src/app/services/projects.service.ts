@@ -65,18 +65,18 @@ export class ProjectsService {
     );
   }
 
-  updateAttempts(id: number, change: number): void {
-    this.projectsSignal.update((projects) =>
-      projects.map((project) =>
-        project.id === id
-          ? {
-              ...project,
-              attempts: Math.max(0, project.attempts + change),
-            }
-          : project,
-      ),
-    );
-    this.saveProjects();
+  updateAttempts(id: number, change: number) {
+    return this.http
+      .patch<Project>(`/api/projects/${id}/attempts`, { change })
+      .pipe(
+        tap((updatedProject) => {
+          this.projectsSignal.update((projects) =>
+            projects.map((project) =>
+              project.id === id ? updatedProject : project,
+            ),
+          );
+        }),
+      );
   }
 
   addNote(projectId: number, body: string): void {

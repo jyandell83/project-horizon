@@ -70,6 +70,32 @@ app.put('/api/projects/:id', async (req, res) => {
   res.json(updatedProject);
 });
 
+app.patch('/api/projects/:id/attempts', async (req, res) => {
+  const id = Number(req.params.id);
+  const { change } = req.body;
+
+  const result = await pool.query(
+    `
+    UPDATE projects
+    SET attempts = GREATEST(0, attempts + $1)
+    WHERE id = $2
+    RETURNING *
+    `,
+    [change, id],
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({ message: 'Project not found' });
+  }
+
+  const updatedProject = {
+    ...result.rows[0],
+    notes: [],
+  };
+
+  res.json(updatedProject);
+});
+
 app.delete('/api/projects/:id', async (req, res) => {
   const id = Number(req.params.id);
 

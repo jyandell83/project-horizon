@@ -48,8 +48,11 @@ export class ProjectListComponent {
 
   deleteProject(id: number): void {
     if (confirm('Delete this project?')) {
-      this.projectsService.deleteProject(id).subscribe();
-      this.projects = this.projectsService.projects;
+      this.projectsService.deleteProject(id).subscribe({
+        error: (error) => {
+          console.error('Failed to delete project:', error);
+        },
+      });
     }
   }
 

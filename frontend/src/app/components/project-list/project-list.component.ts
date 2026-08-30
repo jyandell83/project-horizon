@@ -102,7 +102,11 @@ export class ProjectListComponent {
 
   deleteNote(projectId: number, noteId: number) {
     if (confirm('Delete this note?')) {
-      this.projectsService.deleteNote(projectId, noteId);
+      this.projectsService.deleteNote(projectId, noteId).subscribe({
+        error: (error) => {
+          console.error('Failed to delete note:', error);
+        },
+      });
     }
   }
 

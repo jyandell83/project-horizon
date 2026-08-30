@@ -143,6 +143,26 @@ app.post('/api/projects/:id/notes', async (req, res) => {
   });
 });
 
+app.delete('/api/projects/:projectId/notes/:noteId', async (req, res) => {
+  const projectId = Number(req.params.projectId);
+  const noteId = Number(req.params.noteId);
+
+  const result = await pool.query(
+    `
+    DELETE FROM project_notes
+    WHERE id = $1 AND project_id = $2
+    RETURNING *
+    `,
+    [noteId, projectId],
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({ message: 'Note not found' });
+  }
+
+  res.status(204).send();
+});
+
 app.get('/api/hello', (_req, res) => {
   res.json({ message: 'Hello from the backend' });
 });

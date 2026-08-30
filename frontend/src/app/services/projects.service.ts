@@ -100,18 +100,23 @@ export class ProjectsService {
       );
   }
 
-  deleteNote(projectId: number, noteId: number): void {
-    this.projectsSignal.update((projects) =>
-      projects.map((project) =>
-        project.id === projectId
-          ? {
-              ...project,
-              notes: project.notes.filter((note) => note.id !== noteId),
-            }
-          : project,
-      ),
-    );
-    this.saveProjects();
+  deleteNote(projectId: number, noteId: number) {
+    return this.http
+      .delete<void>(`/api/projects/${projectId}/notes/${noteId}`)
+      .pipe(
+        tap(() => {
+          this.projectsSignal.update((projects) =>
+            projects.map((project) =>
+              project.id === projectId
+                ? {
+                    ...project,
+                    notes: project.notes.filter((note) => note.id !== noteId),
+                  }
+                : project,
+            ),
+          );
+        }),
+      );
   }
 
   updateNote(projectId: number, noteId: number, updatedBody: string): void {

@@ -163,6 +163,68 @@ app.delete('/api/projects/:projectId/notes/:noteId', async (req, res) => {
   res.status(204).send();
 });
 
+app.patch('/api/projects/:projectId/notes/:noteId', async (req, res) => {
+  const projectId = Number(req.params.projectId);
+  const noteId = Number(req.params.noteId);
+  const { body } = req.body;
+
+  const result = await pool.query(
+    `
+      UPDATE project_notes
+      SET body = $1
+      WHERE id = $2 AND project_id = $3
+      RETURNING *
+      `,
+    [body, noteId, projectId],
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({ message: 'Note not found' });
+  }
+
+  const note = result.rows[0];
+
+  res.json({
+    id: note.id,
+    body: note.body,
+    date: note.created_at,
+  });
+});
+
+app.get('/api/projects/:id', async (req, res) => {
+  const id = Number(req.params.id);
+
+  const projectResult = await pool.query(
+    'SELECT * FROM projects WHERE id = $1',
+    [id],
+  );
+
+  if (projectResult.rows.length === 0) {
+    return res.status(404).json({ message: 'Project not found' });
+  }
+
+  const notesResult = await pool.query(
+    `
+    SELECT *
+    FROM project_notes
+    WHERE project_id = $1
+    ORDER BY created_at
+    `,
+    [id],
+  );
+
+  const project = {
+    ...projectResult.rows[0],
+    notes: notesResult.rows.map((note) => ({
+      id: note.id,
+      body: note.body,
+      date: note.created_at,
+    })),
+  };
+
+  res.json(project);
+});
+
 app.get('/api/hello', (_req, res) => {
   res.json({ message: 'Hello from the backend' });
 });

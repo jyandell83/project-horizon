@@ -26,24 +26,13 @@ export class ProjectsService {
     });
   }
 
-  private saveProjects(): void {
-    localStorage.setItem('projects', JSON.stringify(this.projectsSignal()));
-  }
-
   getProjectById(id: number): Project | undefined {
     return this.projectsSignal().find((project) => project.id === id);
   }
 
-  // OLD WAY BEFORE SQL DB
-  // addProject(project: Omit<Project, 'id'>): void {
-  //   const newProject: Project = {
-  //     ...project,
-  //     id: Date.now(),
-  //   };
-
-  //   this.projectsSignal.update((projects) => [...projects, newProject]);
-  //   this.saveProjects();
-  // }
+  getProject(id: number) {
+    return this.http.get<Project>(`/api/projects/${id}`);
+  }
 
   addProject(project: Omit<Project, 'id'>) {
     return this.http.post<Project>('/api/projects', project).pipe(
@@ -119,25 +108,27 @@ export class ProjectsService {
       );
   }
 
-  updateNote(projectId: number, noteId: number, updatedBody: string): void {
-    this.projectsSignal.update((projects) =>
-      projects.map((project) =>
-        project.id === projectId
-          ? {
-              ...project,
-              notes: project.notes.map((note) =>
-                note.id === noteId
-                  ? {
-                      ...note,
-                      body: updatedBody,
-                    }
-                  : note,
-              ),
-            }
-          : project,
-      ),
-    );
-    this.saveProjects();
+  updateNote(projectId: number, noteId: number, updatedBody: string) {
+    return this.http
+      .patch<ProjectNote>(`/api/projects/${projectId}/notes/${noteId}`, {
+        body: updatedBody.trim(),
+      })
+      .pipe(
+        tap((updatedNote) => {
+          this.projectsSignal.update((projects) =>
+            projects.map((project) =>
+              project.id === projectId
+                ? {
+                    ...project,
+                    notes: project.notes.map((note) =>
+                      note.id === noteId ? updatedNote : note,
+                    ),
+                  }
+                : project,
+            ),
+          );
+        }),
+      );
   }
 
   deleteProject(id: number) {

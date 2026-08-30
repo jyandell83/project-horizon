@@ -35,11 +35,14 @@ export class ProjectFormPageComponent {
       this.isEditing = true;
       this.projectId = Number(idParam);
 
-      const project = this.projectsService.getProjectById(this.projectId);
-
-      if (project) {
-        this.projectForm.patchValue(project);
-      }
+      this.projectsService.getProject(this.projectId).subscribe({
+        next: (project) => {
+          this.projectForm.patchValue(project);
+        },
+        error: (error) => {
+          console.error('Failed to load project:', error);
+        },
+      });
     }
   }
 
@@ -80,16 +83,6 @@ export class ProjectFormPageComponent {
           },
         });
     } else {
-      //OLD WAY BEFORE DB
-      // this.projectsService.addProject({
-      //   name: formValue.name,
-      //   grade: formValue.grade,
-      //   location: formValue.location,
-      //   environment: formValue.environment,
-      //   status: formValue.status,
-      //   attempts: 0,
-      //   notes: [],
-      // });
       this.projectsService
         .addProject({
           name: formValue.name,

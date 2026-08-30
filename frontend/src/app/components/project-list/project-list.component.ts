@@ -83,11 +83,13 @@ export class ProjectListComponent {
     }
 
     if (this.noteBeingEdited) {
-      this.projectsService.updateNote(
-        project.id,
-        this.noteBeingEdited.id,
-        this.noteText,
-      );
+      this.projectsService
+        .updateNote(project.id, this.noteBeingEdited.id, this.noteText)
+        .subscribe({
+          error: (error) => {
+            console.error('Failed to update note:', error);
+          },
+        });
     } else {
       this.projectsService.addNote(project.id, this.noteText).subscribe({
         error: (error) => {

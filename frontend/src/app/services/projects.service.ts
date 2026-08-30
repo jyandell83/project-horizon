@@ -134,10 +134,13 @@ export class ProjectsService {
     this.saveProjects();
   }
 
-  deleteProject(id: number): void {
-    this.projectsSignal.update((projects) =>
-      projects.filter((project) => project.id !== id),
+  deleteProject(id: number) {
+    return this.http.delete<void>(`/api/projects/${id}`).pipe(
+      tap(() => {
+        this.projectsSignal.update((projects) =>
+          projects.filter((project) => project.id !== id),
+        );
+      }),
     );
-    this.saveProjects();
   }
 }

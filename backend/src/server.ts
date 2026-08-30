@@ -70,6 +70,21 @@ app.put('/api/projects/:id', async (req, res) => {
   res.json(updatedProject);
 });
 
+app.delete('/api/projects/:id', async (req, res) => {
+  const id = Number(req.params.id);
+
+  const result = await pool.query(
+    'DELETE FROM projects WHERE id = $1 RETURNING *',
+    [id],
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({ message: 'Project not found' });
+  }
+
+  res.status(204).send();
+});
+
 app.get('/api/hello', (_req, res) => {
   res.json({ message: 'Hello from the backend' });
 });

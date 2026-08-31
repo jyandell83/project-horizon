@@ -47,7 +47,12 @@ export class ProjectsService {
       tap((updatedProject) => {
         this.projectsSignal.update((projects) =>
           projects.map((project) =>
-            project.id === id ? updatedProject : project,
+            project.id === id
+              ? {
+                  ...updatedProject,
+                  notes: project.notes,
+                }
+              : project,
           ),
         );
       }),

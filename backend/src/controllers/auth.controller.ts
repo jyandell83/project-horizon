@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { pool } from '../db.js';
 
 export async function signup(req: Request, res: Response) {
@@ -73,6 +74,16 @@ export async function login(req: Request, res: Response) {
         message: 'Invalid email or password',
       });
     }
+
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
+      expiresIn: '1h',
+    });
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false,
+    });
 
     return res.status(200).json({
       id: user.id,

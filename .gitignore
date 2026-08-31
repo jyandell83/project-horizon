@@ -37,6 +37,7 @@ yarn-error.log
 testem.log
 /typings
 frontend/.angular/
+.env
 
 # System files
 .DS_Store

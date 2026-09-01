@@ -2,6 +2,7 @@ import 'dotenv/config';
 
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import projectsRouter from './routes/projects.routes.js';
 import authRouter from './routes/auth.routes.js';
@@ -16,6 +17,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/api/projects', projectsRouter);
 app.use('/api/auth', authRouter);

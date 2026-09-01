@@ -1,7 +1,22 @@
-import type { Request, Response } from 'express';
+import type { CookieOptions, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { pool } from '../db.js';
+
+const authCookieOptions: CookieOptions = {
+  httpOnly: true,
+  sameSite: 'lax',
+  secure: process.env.NODE_ENV === 'production',
+  maxAge: 60 * 60 * 1000,
+};
+
+function setAuthCookie(res: Response, userId: number) {
+  const token = jwt.sign({ userId }, process.env.JWT_SECRET!, {
+    expiresIn: '1h',
+  });
+
+  res.cookie('token', token, authCookieOptions);
+}
 
 export async function signup(req: Request, res: Response) {
   try {
@@ -24,7 +39,11 @@ export async function signup(req: Request, res: Response) {
       [email, passwordHash],
     );
 
-    return res.status(201).json(result.rows[0]);
+    const user = result.rows[0];
+
+    setAuthCookie(res, user.id);
+
+    return res.status(201).json(user);
   } catch (error: any) {
     if (error.code === '23505') {
       return res.status(409).json({
@@ -75,15 +94,7 @@ export async function login(req: Request, res: Response) {
       });
     }
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-      expiresIn: '1h',
-    });
-
-    res.cookie('token', token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
-    });
+    setAuthCookie(res, user.id);
 
     return res.status(200).json({
       id: user.id,
@@ -96,6 +107,16 @@ export async function login(req: Request, res: Response) {
       message: 'Failed to log in',
     });
   }
+}
+
+export function logout(_req: Request, res: Response) {
+  res.clearCookie('token', {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  });
+
+  return res.status(204).send();
 }
 
 export async function getCurrentUser(req: Request, res: Response) {

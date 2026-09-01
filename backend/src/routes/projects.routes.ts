@@ -1,5 +1,7 @@
 import { Router } from 'express';
 
+import { requireAuth } from '../middleware/auth.middleware.js';
+
 import {
   getProjects,
   getProjectById,
@@ -13,6 +15,7 @@ import {
 } from '../controllers/projects.controller.js';
 
 const router = Router();
+router.use(requireAuth);
 
 router.get('/', getProjects);
 router.get('/:id', getProjectById);

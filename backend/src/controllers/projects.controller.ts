@@ -1,11 +1,28 @@
 import type { Request, Response } from 'express';
 import { pool } from '../db.js';
 
-export async function getProjects(_req: Request, res: Response) {
-  const projectsResult = await pool.query('SELECT * FROM projects ORDER BY id');
+export async function getProjects(req: Request, res: Response) {
+  const userId = (req as any).userId;
+  const projectsResult = await pool.query(
+    `
+    SELECT *
+    FROM projects
+    WHERE user_id = $1
+    ORDER BY id
+  `,
+    [userId],
+  );
 
   const notesResult = await pool.query(
-    'SELECT * FROM project_notes ORDER BY created_at',
+    `
+    SELECT project_notes.*
+    FROM project_notes
+    JOIN projects
+      ON project_notes.project_id = projects.id
+    WHERE projects.user_id = $1
+    ORDER BY project_notes.created_at
+  `,
+    [userId],
   );
 
   const projects = projectsResult.rows.map((project) => ({
@@ -25,11 +42,13 @@ export async function getProjects(_req: Request, res: Response) {
 export async function createProject(req: Request, res: Response) {
   const { name, grade, location, environment } = req.body;
 
+  const userId = (req as any).userId;
+
   const result = await pool.query(
-    `INSERT INTO projects (name, grade, location, environment)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO projects (name, grade, location, environment,user_id)
+     VALUES ($1, $2, $3, $4,$5)
      RETURNING *`,
-    [name, grade, location, environment],
+    [name, grade, location, environment, userId],
   );
 
   const newProject = {
@@ -43,6 +62,7 @@ export async function createProject(req: Request, res: Response) {
 export async function updateProject(req: Request, res: Response) {
   const id = Number(req.params.id);
   const { name, grade, location, environment, status } = req.body;
+  const userId = (req as any).userId;
 
   const result = await pool.query(
     `
@@ -53,21 +73,28 @@ export async function updateProject(req: Request, res: Response) {
       location = $3,
       environment = $4,
       status = $5
-    WHERE id = $6
+    WHERE id = $6 AND user_id = $7
     RETURNING *
     `,
-    [name, grade, location, environment, status, id],
+    [name, grade, location, environment, status, id, userId],
   );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({
+      message: 'Project not found',
+    });
+  }
 
   res.json(result.rows[0]);
 }
 
 export async function deleteProject(req: Request, res: Response) {
   const id = Number(req.params.id);
+  const userId = (req as any).userId;
 
   const result = await pool.query(
-    'DELETE FROM projects WHERE id = $1 RETURNING *',
-    [id],
+    'DELETE FROM projects WHERE id = $1 AND user_id = $2 RETURNING *',
+    [id, userId],
   );
 
   if (result.rows.length === 0) {
@@ -80,15 +107,16 @@ export async function deleteProject(req: Request, res: Response) {
 export async function updateProjectAttempts(req: Request, res: Response) {
   const id = Number(req.params.id);
   const { change } = req.body;
+  const userId = (req as any).userId;
 
   const result = await pool.query(
     `
     UPDATE projects
     SET attempts = GREATEST(0, attempts + $1)
-    WHERE id = $2
+    WHERE id = $2 AND user_id = $3
     RETURNING *
     `,
-    [change, id],
+    [change, id, userId],
   );
 
   if (result.rows.length === 0) {
@@ -101,19 +129,29 @@ export async function updateProjectAttempts(req: Request, res: Response) {
 export async function createProjectNote(req: Request, res: Response) {
   const projectId = Number(req.params.id);
   const { body } = req.body;
+  const userId = (req as any).userId;
 
   const result = await pool.query(
     `
-    INSERT INTO project_notes (project_id, body)
-    VALUES ($1, $2)
-    RETURNING *
+      INSERT INTO project_notes (project_id, body)
+      SELECT id, $2
+      FROM projects
+      WHERE id = $1
+      AND user_id = $3
+      RETURNING *
     `,
-    [projectId, body],
+    [projectId, body, userId],
   );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({
+      message: 'Project not found',
+    });
+  }
 
   const note = result.rows[0];
 
-  res.status(201).json({
+  return res.status(201).json({
     id: note.id,
     body: note.body,
     date: note.created_at,
@@ -123,14 +161,22 @@ export async function createProjectNote(req: Request, res: Response) {
 export async function deleteProjectNote(req: Request, res: Response) {
   const projectId = Number(req.params.projectId);
   const noteId = Number(req.params.noteId);
+  const userId = (req as any).userId;
 
   const result = await pool.query(
     `
     DELETE FROM project_notes
-    WHERE id = $1 AND project_id = $2
+    WHERE id = $1
+    AND project_id = $2
+    AND EXISTS (
+      SELECT 1
+      FROM projects
+      WHERE projects.id = project_notes.project_id
+      AND projects.user_id = $3
+    )
     RETURNING *
-    `,
-    [noteId, projectId],
+  `,
+    [noteId, projectId, userId],
   );
 
   if (result.rows.length === 0) {
@@ -145,14 +191,23 @@ export async function updateProjectNote(req: Request, res: Response) {
   const noteId = Number(req.params.noteId);
   const { body } = req.body;
 
+  const userId = (req as any).userId;
+
   const result = await pool.query(
     `
-      UPDATE project_notes
-      SET body = $1
-      WHERE id = $2 AND project_id = $3
-      RETURNING *
-      `,
-    [body, noteId, projectId],
+    UPDATE project_notes
+    SET body = $1
+    WHERE id = $2
+    AND project_id = $3
+    AND EXISTS (
+      SELECT 1
+      FROM projects
+      WHERE projects.id = project_notes.project_id
+      AND projects.user_id = $4
+    )
+    RETURNING *
+  `,
+    [body, noteId, projectId, userId],
   );
 
   if (result.rows.length === 0) {
@@ -170,10 +225,11 @@ export async function updateProjectNote(req: Request, res: Response) {
 
 export async function getProjectById(req: Request, res: Response) {
   const id = Number(req.params.id);
+  const userId = (req as any).userId;
 
   const projectResult = await pool.query(
-    'SELECT * FROM projects WHERE id = $1',
-    [id],
+    'SELECT * FROM projects WHERE id = $1 AND user_id = $2',
+    [id, userId],
   );
 
   if (projectResult.rows.length === 0) {
@@ -182,12 +238,15 @@ export async function getProjectById(req: Request, res: Response) {
 
   const notesResult = await pool.query(
     `
-    SELECT *
+    SELECT project_notes.*
     FROM project_notes
-    WHERE project_id = $1
-    ORDER BY created_at
-    `,
-    [id],
+    JOIN projects
+      ON project_notes.project_id = projects.id
+    WHERE project_notes.project_id = $1
+    AND projects.user_id = $2
+    ORDER BY project_notes.created_at
+  `,
+    [id, userId],
   );
 
   const project = {

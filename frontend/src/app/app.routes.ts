@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { ProjectsPageComponent } from './pages/projects-page/projects-page.component';
@@ -25,26 +26,36 @@ export const routes: Routes = [
   {
     path: 'projects',
     component: ProjectsPageComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'projects/new',
     component: ProjectFormPageComponent,
+    canActivate: [authGuard],
   },
-  { path: 'projects/:id/edit', component: ProjectFormPageComponent },
+  {
+    path: 'projects/:id/edit',
+    component: ProjectFormPageComponent,
+    canActivate: [authGuard],
+  },
   {
     path: 'sessions',
     component: SessionsPageComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'sessions/active',
     component: SessionsActivePageComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'sessions/:id/edit',
     component: SessionEditPageComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'profile',
     component: ProfilePageComponent,
+    canActivate: [authGuard],
   },
 ];

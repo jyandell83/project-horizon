@@ -97,3 +97,34 @@ export async function login(req: Request, res: Response) {
     });
   }
 }
+
+export async function getCurrentUser(req: Request, res: Response) {
+  try {
+    const userId = (req as any).userId;
+
+    const result = await pool.query(
+      `
+        SELECT id, email, created_at
+        FROM users
+        WHERE id = $1
+      `,
+      [userId],
+    );
+
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found',
+      });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error('Error getting current user:', error);
+
+    return res.status(500).json({
+      message: 'Failed to get current user',
+    });
+  }
+}

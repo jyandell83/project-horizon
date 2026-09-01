@@ -38,6 +38,7 @@ testem.log
 /typings
 frontend/.angular/
 .env
+cookies.txt
 
 # System files
 .DS_Store

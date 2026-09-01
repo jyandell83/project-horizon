@@ -7,6 +7,7 @@ import { ProfilePageComponent } from './pages/profile-page/profile-page.componen
 import { SessionsActivePageComponent } from './pages/sessions-active-page/sessions-active-page.component';
 import { ProjectFormPageComponent } from './pages/project-form-page/project-form-page.component';
 import { SessionEditPageComponent } from './pages/session-edit-page/session-edit-page.component';
+import { SignupPageComponent } from './pages/signup-page/signup-page.component';
 
 export const routes: Routes = [
   {
@@ -16,6 +17,10 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginPageComponent,
+  },
+  {
+    path: 'signup',
+    component: SignupPageComponent,
   },
   {
     path: 'projects',

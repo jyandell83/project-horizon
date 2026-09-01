@@ -54,8 +54,13 @@ export class AuthService {
   logout() {
     return this.http.post<void>('/api/auth/logout', {}).pipe(
       tap(() => {
-        this.currentUserState.set(null);
+        this.clearSession();
       }),
     );
+  }
+
+  clearSession(): void {
+    this.currentUserState.set(null);
+    this.authCheckedState.set(true);
   }
 }

@@ -11,6 +11,7 @@ import {
   endSession,
   deleteSession,
   updateSession,
+  getSessionById,
 } from '../controllers/sessions.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 
@@ -34,5 +35,6 @@ router.patch('/:sessionId/phases/:phaseId/end', endSessionPhase);
 router.post('/:sessionId/end', endSession);
 router.delete('/:sessionId', deleteSession);
 router.patch('/:sessionId', updateSession);
+router.get('/:sessionId', getSessionById);
 
 export default router;

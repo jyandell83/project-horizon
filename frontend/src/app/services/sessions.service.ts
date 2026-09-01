@@ -66,8 +66,8 @@ export class SessionsService {
     });
   }
 
-  getSessionById(id: string): ClimbingSession | undefined {
-    return this.sessionsSignal().find((session) => session.id === id);
+  getSession(id: string) {
+    return this.http.get<ClimbingSession>(`/api/sessions/${id}`);
   }
 
   private getCurrentPhase(): SessionPhase | null {

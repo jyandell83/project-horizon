@@ -883,3 +883,104 @@ export async function updateSession(req: Request, res: Response) {
     client.release();
   }
 }
+
+export async function getSessionById(req: Request, res: Response) {
+  const userId = req.userId;
+  const { sessionId } = req.params;
+
+  if (userId === undefined) {
+    return res.status(401).json({
+      message: 'Authentication required',
+    });
+  }
+
+  try {
+    const sessionResult = await pool.query(
+      `
+        SELECT
+          id,
+          started_at AS "startedAt",
+          ended_at AS "endedAt",
+          location,
+          environment,
+          notes
+        FROM sessions
+        WHERE id = $1
+          AND user_id = $2
+      `,
+      [sessionId, userId],
+    );
+
+    const session = sessionResult.rows[0];
+
+    if (!session) {
+      return res.status(404).json({
+        message: 'Session not found',
+      });
+    }
+
+    const phasesResult = await pool.query(
+      `
+        SELECT
+          id,
+          type,
+          started_at AS "startedAt",
+          ended_at AS "endedAt"
+        FROM session_phases
+        WHERE session_id = $1
+        ORDER BY position
+      `,
+      [sessionId],
+    );
+
+    const projectWorkResult = await pool.query(
+      `
+        SELECT
+          session_project_work.phase_id,
+          session_project_work.project_id AS "projectId",
+          session_project_work.attempts,
+          session_project_work.sent,
+          session_project_work.notes
+        FROM session_project_work
+        JOIN session_phases
+          ON session_phases.id =
+            session_project_work.phase_id
+        JOIN sessions
+          ON sessions.id = session_phases.session_id
+        WHERE sessions.id = $1
+          AND sessions.user_id = $2
+        ORDER BY session_project_work.id
+      `,
+      [sessionId, userId],
+    );
+
+    const phases = phasesResult.rows.map((phase) => ({
+      ...phase,
+      projectWork: projectWorkResult.rows
+        .filter((work) => work.phase_id === phase.id)
+        .map((work) => ({
+          projectId: work.projectId,
+          attempts: work.attempts,
+          sent: work.sent,
+          notes: work.notes,
+        })),
+    }));
+
+    return res.status(200).json({
+      ...session,
+      phases,
+    });
+  } catch (error: any) {
+    if (error.code === '22P02') {
+      return res.status(400).json({
+        message: 'Invalid session ID',
+      });
+    }
+
+    console.error('Error getting session:', error);
+
+    return res.status(500).json({
+      message: 'Failed to get session',
+    });
+  }
+}

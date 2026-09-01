@@ -69,36 +69,48 @@ export class SessionEditPageComponent {
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
 
-    if (idParam) {
-      this.sessionId = idParam;
-      this.session = this.sessionsService.getSessionById(this.sessionId);
+    if (!idParam) {
+      this.router.navigate(['/sessions']);
 
-      if (this.session) {
-        this.sessionForm.patchValue({
-          location: this.session.location ?? '',
-          startedAt: this.toDateTimeLocal(this.session.startedAt),
-          endedAt: this.session.endedAt
-            ? this.toDateTimeLocal(this.session.endedAt)
-            : '',
-        });
+      return;
+    }
 
-        for (const phase of this.session.phases) {
-          this.phases.push(
-            this.fb.nonNullable.group(
-              {
-                type: [phase.type],
-                startedAt: [this.toDateTimeLocal(phase.startedAt)],
-                endedAt: [
-                  phase.endedAt ? this.toDateTimeLocal(phase.endedAt) : '',
-                ],
-              },
-              {
-                validators: validTimeRange,
-              },
-            ),
-          );
-        }
-      }
+    this.sessionId = idParam;
+
+    this.sessionsService.getSession(idParam).subscribe({
+      next: (session) => {
+        this.session = session;
+        this.populateForm(session);
+      },
+      error: (error) => {
+        console.error('Failed to load session', error);
+        this.router.navigate(['/sessions']);
+      },
+    });
+  }
+
+  private populateForm(session: ClimbingSession): void {
+    this.sessionForm.patchValue({
+      location: session.location ?? '',
+      startedAt: this.toDateTimeLocal(session.startedAt),
+      endedAt: session.endedAt ? this.toDateTimeLocal(session.endedAt) : '',
+    });
+
+    this.phases.clear();
+
+    for (const phase of session.phases) {
+      this.phases.push(
+        this.fb.nonNullable.group(
+          {
+            type: [phase.type],
+            startedAt: [this.toDateTimeLocal(phase.startedAt)],
+            endedAt: [phase.endedAt ? this.toDateTimeLocal(phase.endedAt) : ''],
+          },
+          {
+            validators: validTimeRange,
+          },
+        ),
+      );
     }
   }
 

@@ -7,7 +7,7 @@
       />
     </a>
 
-    <nav class="nav">
+    <nav class="nav" aria-label="Primary navigation">
       <a
         class="nav-link"
         routerLink="/"
@@ -17,16 +17,36 @@
         Home
       </a>
 
-      <a class="nav-link" routerLink="/projects" routerLinkActive="active">
-        Projects
-      </a>
+      @if (currentUser()) {
+        <a class="nav-link" routerLink="/projects" routerLinkActive="active">
+          Projects
+        </a>
 
-      <a class="nav-link" routerLink="/sessions" routerLinkActive="active">
-        Sessions
-      </a>
-      <a class="nav-link" routerLink="/profile" routerLinkActive="active">
-        Profile
-      </a>
+        <a class="nav-link" routerLink="/sessions" routerLinkActive="active">
+          Sessions
+        </a>
+
+        <a class="nav-link" routerLink="/profile" routerLinkActive="active">
+          Profile
+        </a>
+
+        <button
+          type="button"
+          class="nav-link"
+          [disabled]="isLoggingOut()"
+          (click)="logout()"
+        >
+          {{ isLoggingOut() ? "Logging out…" : "Log out" }}
+        </button>
+      } @else {
+        <a class="nav-link" routerLink="/login" routerLinkActive="active">
+          Log in
+        </a>
+
+        <a class="nav-link" routerLink="/signup" routerLinkActive="active">
+          Sign up
+        </a>
+      }
     </nav>
   </div>
 </header>

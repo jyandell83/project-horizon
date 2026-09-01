@@ -1,35 +1,34 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, effect } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs';
 import {
   ClimbingSession,
   SessionPhase,
   SessionPhaseType,
-  ProjectWork,
 } from '../models/session';
-import { SESSIONS } from '../data/dummy-sessions';
 
 import { ProjectsService } from './projects.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SessionsService {
+  private http = inject(HttpClient);
   private projectsService = inject(ProjectsService);
+  private authService = inject(AuthService);
   constructor() {
-    const storedActiveSession = localStorage.getItem('activeSession');
-
-    if (storedActiveSession) {
-      this.activeSessionSignal.set(
-        JSON.parse(storedActiveSession) as ClimbingSession,
-      );
-    }
-
-    const storedSessions = localStorage.getItem('sessions');
-
-    if (storedSessions) {
-      this.sessionsSignal.set(JSON.parse(storedSessions) as ClimbingSession[]);
-    } else {
-      this.sessionsSignal.set([...SESSIONS]);
-    }
+    effect(
+      () => {
+        if (this.authService.currentUser()) {
+          this.loadSessions();
+        } else {
+          this.sessionsSignal.set([]);
+          this.activeSessionSignal.set(null);
+        }
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   private readonly sessionsSignal = signal<ClimbingSession[]>([]);
@@ -39,18 +38,36 @@ export class SessionsService {
 
   readonly activeSession = this.activeSessionSignal.asReadonly();
 
+  private loadSessions(): void {
+    const userId = this.authService.currentUser()?.id;
+
+    if (userId === undefined) {
+      this.sessionsSignal.set([]);
+      this.activeSessionSignal.set(null);
+
+      return;
+    }
+    this.http.get<ClimbingSession[]>('/api/sessions').subscribe({
+      next: (sessions) => {
+        if (this.authService.currentUser()?.id !== userId) {
+          return;
+        }
+        this.activeSessionSignal.set(
+          sessions.find((session) => session.endedAt === null) ?? null,
+        );
+
+        this.sessionsSignal.set(
+          sessions.filter((session) => session.endedAt !== null),
+        );
+      },
+      error: (error) => {
+        console.error('Failed to load sessions', error);
+      },
+    });
+  }
+
   getSessionById(id: string): ClimbingSession | undefined {
     return this.sessionsSignal().find((session) => session.id === id);
-  }
-
-  private saveSessions(): void {
-    localStorage.setItem('sessions', JSON.stringify(this.sessionsSignal()));
-  }
-
-  private saveActiveSession(): void {
-    const session = this.activeSessionSignal();
-
-    localStorage.setItem('activeSession', JSON.stringify(session));
   }
 
   private getCurrentPhase(): SessionPhase | null {
@@ -62,55 +79,75 @@ export class SessionsService {
   }
 
   addProjectToCurrentPhase(projectId: number): void {
+    const session = this.activeSessionSignal();
     const currentPhase = this.getCurrentPhase();
-    if (currentPhase?.type !== 'project') {
+
+    if (
+      !session ||
+      currentPhase?.type !== 'project' ||
+      currentPhase.endedAt !== null
+    ) {
       return;
     }
-    currentPhase.projectWork.push({
-      projectId,
-      attempts: 0,
-      sent: false,
-      notes: [],
-    });
-    this.saveActiveSession();
+
+    this.http
+      .post(`/api/sessions/${session.id}/phases/${currentPhase.id}/projects`, {
+        projectId,
+      })
+      .subscribe({
+        next: () => {
+          this.loadSessions();
+        },
+        error: (error) => {
+          console.error('Failed to add project to phase', error);
+        },
+      });
   }
 
   updateProjectAttempts(projectId: number, change: number): void {
+    const session = this.activeSessionSignal();
     const currentPhase = this.getCurrentPhase();
 
-    if (currentPhase?.type !== 'project') {
+    if (!session || !currentPhase) {
       return;
     }
 
-    const projectWork = currentPhase.projectWork.find(
-      (work) => work.projectId === projectId,
-    );
-
-    if (!projectWork) {
-      return;
-    }
-
-    projectWork.attempts = Math.max(0, projectWork.attempts + change);
-
-    this.saveActiveSession();
+    this.http
+      .patch(
+        `/api/sessions/${session.id}/phases/${currentPhase.id}/projects/${projectId}/attempts`,
+        { change },
+      )
+      .subscribe({
+        next: () => {
+          this.loadSessions();
+        },
+        error: (error) => {
+          console.error('Failed to update attempts', error);
+        },
+      });
   }
 
-  markProjectSent(projectId: number) {
-    const session = this.activeSession();
+  markProjectSent(projectId: number): void {
+    const session = this.activeSessionSignal();
+    const currentPhase = this.getCurrentPhase();
 
-    if (!session) return;
+    if (!session || !currentPhase) {
+      return;
+    }
 
-    const phase = session.phases.find((phase) => !phase.endedAt);
-
-    const projectWork = phase?.projectWork.find(
-      (work) => work.projectId === projectId,
-    );
-
-    if (!projectWork) return;
-
-    projectWork.sent = true;
-
-    this.saveActiveSession();
+    this.http
+      .patch(
+        `/api/sessions/${session.id}/phases/${currentPhase.id}/projects/${projectId}/sent`,
+        {},
+      )
+      .subscribe({
+        next: () => {
+          this.loadSessions();
+        },
+        error: (error) => {
+          console.error('Failed to mark project sent', error);
+        },
+      });
   }
 
   startSession(location: string): void {
@@ -118,176 +155,88 @@ export class SessionsService {
       return;
     }
 
-    const newSession: ClimbingSession = {
-      id: crypto.randomUUID(),
-      startedAt: new Date().toISOString(),
-      endedAt: null,
-      location: location,
-      phases: [],
-      notes: [],
-    };
-
-    this.activeSessionSignal.set(newSession);
-
-    this.saveActiveSession();
+    this.http.post<ClimbingSession>('/api/sessions', { location }).subscribe({
+      next: (session) => {
+        this.activeSessionSignal.set(session);
+      },
+      error: (error) => {
+        console.error('Failed to start session', error);
+      },
+    });
   }
 
-  startPhase(type: SessionPhaseType, projectId?: string): void {
+  startPhase(type: SessionPhaseType): void {
     const session = this.activeSessionSignal();
 
     if (!session) {
       return;
     }
 
-    const timestamp = new Date().toISOString();
-
-    const updatedPhases = session.phases.map((phase) => {
-      if (phase.endedAt === null) {
-        return {
-          ...phase,
-          endedAt: timestamp,
-        };
-      }
-
-      return phase;
+    this.http.post(`/api/sessions/${session.id}/phases`, { type }).subscribe({
+      next: () => {
+        this.loadSessions();
+      },
+      error: (error) => {
+        console.error('Failed to start phase', error);
+      },
     });
-
-    const newPhase: SessionPhase = {
-      id: crypto.randomUUID(),
-      type,
-      startedAt: timestamp,
-      endedAt: null,
-      projectWork: [],
-    };
-
-    this.activeSessionSignal.set({
-      ...session,
-      phases: [...updatedPhases, newPhase],
-    });
-    this.saveActiveSession();
   }
 
   endCurrentPhase(): void {
     const session = this.activeSessionSignal();
+    const currentPhase = this.getCurrentPhase();
+
+    if (!session || !currentPhase || currentPhase.endedAt !== null) {
+      return;
+    }
+
+    this.http
+      .patch(`/api/sessions/${session.id}/phases/${currentPhase.id}/end`, {})
+      .subscribe({
+        next: () => {
+          this.loadSessions();
+        },
+        error: (error) => {
+          console.error('Failed to end phase', error);
+        },
+      });
+  }
+
+  endSession(): void {
+    const session = this.activeSessionSignal();
 
     if (!session) {
       return;
     }
 
-    const timestamp = new Date().toISOString();
-
-    const updatedPhases = session.phases.map((phase) => {
-      if (phase.endedAt === null) {
-        return {
-          ...phase,
-          endedAt: timestamp,
-        };
-      }
-
-      return phase;
+    this.http.post(`/api/sessions/${session.id}/end`, {}).subscribe({
+      next: () => {
+        this.loadSessions();
+        this.projectsService.refreshProjects();
+      },
+      error: (error) => {
+        console.error('Failed to end session', error);
+      },
     });
-
-    this.activeSessionSignal.set({
-      ...session,
-      phases: updatedPhases,
-    });
-    this.saveActiveSession();
-  }
-
-  addNote(note: string): void {
-    const session = this.activeSessionSignal();
-    const trimmedNote = note.trim();
-
-    if (!session || !trimmedNote) {
-      return;
-    }
-
-    this.activeSessionSignal.set({
-      ...session,
-      notes: [...session.notes, trimmedNote],
-    });
-    this.saveActiveSession();
-  }
-
-  endSession(): ClimbingSession | null {
-    const session = this.activeSessionSignal();
-
-    if (!session) {
-      return null;
-    }
-
-    const timestamp = new Date().toISOString();
-
-    const completedSession: ClimbingSession = {
-      ...session,
-      endedAt: timestamp,
-      phases: session.phases.map((phase) => {
-        if (phase.endedAt === null) {
-          return {
-            ...phase,
-            endedAt: timestamp,
-          };
-        }
-
-        return phase;
-      }),
-    };
-
-    const attemptsByProject = new Map<number, number>();
-
-    for (const phase of completedSession.phases) {
-      for (const work of phase.projectWork ?? []) {
-        const currentAttempts = attemptsByProject.get(work.projectId) ?? 0;
-
-        attemptsByProject.set(work.projectId, currentAttempts + work.attempts);
-        if (work.sent) {
-          this.projectsService.updateProject(work.projectId, {
-            status: 'sent',
-          });
-        }
-      }
-    }
-
-    for (const [projectId, attempts] of attemptsByProject) {
-      this.projectsService.updateAttempts(projectId, attempts);
-    }
-
-    this.sessionsSignal.update((sessions) => [completedSession, ...sessions]);
-
-    this.saveSessions();
-
-    this.activeSessionSignal.set(null);
-    localStorage.removeItem('activeSession');
-
-    return completedSession;
   }
 
   deleteSession(id: string): void {
-    const session = this.sessionsSignal().find((session) => session.id === id);
-
-    if (!session) return;
-
-    for (const phase of session.phases) {
-      for (const work of phase.projectWork) {
-        const amountToSubtract = -work.attempts;
-        this.projectsService.updateAttempts(work.projectId, amountToSubtract);
-      }
-    }
-
-    this.sessionsSignal.update((sessions) =>
-      sessions.filter((session) => session.id !== id),
-    );
-    this.saveSessions();
+    this.http.delete<void>(`/api/sessions/${id}`).subscribe({
+      next: () => {
+        this.loadSessions();
+        this.projectsService.refreshProjects();
+      },
+      error: (error) => {
+        console.error('Failed to delete session', error);
+      },
+    });
   }
 
-  editSession(id: string, updates: Partial<ClimbingSession>): void {
-    const sessions = this.sessionsSignal();
-
-    const updatedSessions = sessions.map((session) =>
-      session.id === id ? { ...session, ...updates } : session,
+  editSession(id: string, updates: Partial<ClimbingSession>) {
+    return this.http.patch<void>(`/api/sessions/${id}`, updates).pipe(
+      tap(() => {
+        this.loadSessions();
+      }),
     );
-
-    this.sessionsSignal.set(updatedSessions);
-    this.saveSessions();
   }
 }

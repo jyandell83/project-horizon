@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { SESSIONS } from '../../data/dummy-sessions';
 import { ClimbingSession } from '../../models/session';
 
 import { SessionsService } from '../../services/sessions.service';
@@ -15,7 +14,6 @@ import { ProjectsService } from '../../services/projects.service';
   styleUrl: './session-list.component.scss',
 })
 export class SessionListComponent {
-  // sessions: ClimbingSession[] = SESSIONS;
   private readonly sessionsService = inject(SessionsService);
   private readonly projectsService = inject(ProjectsService);
 

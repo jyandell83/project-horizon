@@ -116,15 +116,20 @@ export class SessionEditPageComponent {
         : null,
     }));
 
-    this.sessionsService.editSession(this.sessionId, {
-      location: formValue.location,
-      startedAt: new Date(formValue.startedAt).toISOString(),
-      endedAt: formValue.endedAt
-        ? new Date(formValue.endedAt).toISOString()
-        : undefined,
-      phases: updatedPhases,
-    });
-
-    this.router.navigate(['/sessions']);
+    this.sessionsService
+      .editSession(this.sessionId, {
+        location: formValue.location,
+        startedAt: new Date(formValue.startedAt).toISOString(),
+        endedAt: new Date(formValue.endedAt).toISOString(),
+        phases: updatedPhases,
+      })
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/sessions']);
+        },
+        error: (error) => {
+          console.error('Failed to update session', error);
+        },
+      });
   }
 }

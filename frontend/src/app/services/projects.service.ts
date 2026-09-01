@@ -1,5 +1,6 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, effect } from '@angular/core';
 import { Project, ProjectNote } from '../models/project';
+import { AuthService } from './auth.service';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
 
@@ -8,22 +9,47 @@ import { tap } from 'rxjs';
 })
 export class ProjectsService {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
 
   private readonly projectsSignal = signal<Project[]>([]);
   readonly projects = this.projectsSignal.asReadonly();
   constructor() {
-    this.loadProjects();
+    effect(
+      () => {
+        if (this.authService.currentUser()) {
+          this.loadProjects();
+        } else {
+          this.projectsSignal.set([]);
+        }
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   private loadProjects(): void {
+    const userId = this.authService.currentUser()?.id;
+
+    if (userId === undefined) {
+      this.projectsSignal.set([]);
+
+      return;
+    }
     this.http.get<Project[]>('/api/projects').subscribe({
       next: (projects) => {
+        if (this.authService.currentUser()?.id !== userId) {
+          return;
+        }
+
         this.projectsSignal.set(projects);
       },
       error: (error) => {
         console.error('Failed to load projects', error);
       },
     });
+  }
+
+  refreshProjects(): void {
+    this.loadProjects();
   }
 
   getProjectById(id: number): Project | undefined {

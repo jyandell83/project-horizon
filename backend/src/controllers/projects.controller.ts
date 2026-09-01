@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { pool } from '../db.js';
 
 export async function getProjects(req: Request, res: Response) {
-  const userId = (req as any).userId;
+  const userId = req.userId;
   const projectsResult = await pool.query(
     `
     SELECT *

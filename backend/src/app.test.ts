@@ -69,6 +69,78 @@ describe('authentication lifecycle', () => {
   });
 });
 
+describe('project ownership', () => {
+  test('prevents one user from accessing another user’s project', async () => {
+    const userA = request.agent(app);
+    const userB = request.agent(app);
+
+    await userA
+      .post('/api/auth/signup')
+      .send({
+        email: 'user-a@example.com',
+        password: 'password123',
+      })
+      .expect(201);
+
+    await userB
+      .post('/api/auth/signup')
+      .send({
+        email: 'user-b@example.com',
+        password: 'password123',
+      })
+      .expect(201);
+
+    const createResponse = await userA
+      .post('/api/projects')
+      .send({
+        name: 'User A Project',
+        grade: 'V5',
+        location: 'Test Gym',
+        environment: 'gym',
+        status: 'active',
+        attempts: 0,
+        notes: [],
+      })
+      .expect(201);
+
+    const projectId = createResponse.body.id;
+
+    const userAProjects = await userA.get('/api/projects').expect(200);
+
+    expect(userAProjects.body).toEqual([
+      expect.objectContaining({
+        id: projectId,
+        name: 'User A Project',
+      }),
+    ]);
+
+    const userBProjects = await userB.get('/api/projects').expect(200);
+
+    expect(userBProjects.body).toEqual([]);
+
+    await userB.get(`/api/projects/${projectId}`).expect(404);
+
+    await userB
+      .patch(`/api/projects/${projectId}/attempts`)
+      .send({ change: 5 })
+      .expect(404);
+
+    await userB.delete(`/api/projects/${projectId}`).expect(404);
+
+    const unchangedProject = await userA
+      .get(`/api/projects/${projectId}`)
+      .expect(200);
+
+    expect(unchangedProject.body).toEqual(
+      expect.objectContaining({
+        id: projectId,
+        name: 'User A Project',
+        attempts: 0,
+      }),
+    );
+  });
+});
+
 afterAll(async () => {
   await resetDatabase();
   await pool.end();

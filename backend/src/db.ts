@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
 
 export const pool = new Pool({
-  database: 'project_horizon',
+  database: process.env.DB_NAME ?? 'project_horizon',
 });

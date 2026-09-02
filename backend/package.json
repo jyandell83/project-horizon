@@ -4,7 +4,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch src/server.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "DB_NAME=project_horizon_test NODE_ENV=test jest --runInBand",
+    "test:watch": "DB_NAME=project_horizon_test NODE_ENV=test jest --watch --runInBand"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +23,10 @@
     "pg": "^8.23.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "@babel/preset-typescript": "^7.29.7",
+    "@jest/globals": "^30.5.1",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
@@ -27,6 +34,10 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.4.0",
     "@types/pg": "^8.23.1",
+    "@types/supertest": "^7.2.1",
+    "babel-jest": "^30.5.1",
+    "jest": "^30.5.1",
+    "supertest": "^7.2.2",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   }

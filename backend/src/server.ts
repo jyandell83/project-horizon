@@ -1,32 +1,8 @@
 import 'dotenv/config';
 
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
+import { app } from './app.js';
 
-import authRouter from './routes/auth.routes.js';
-import projectsRouter from './routes/projects.routes.js';
-import sessionsRouter from './routes/sessions.routes.js';
-
-const app = express();
-const PORT = 3000;
-
-app.use(
-  cors({
-    origin: 'http://localhost:4200',
-  }),
-);
-
-app.use(express.json());
-app.use(cookieParser());
-
-app.use('/api/projects', projectsRouter);
-app.use('/api/sessions', sessionsRouter);
-app.use('/api/auth', authRouter);
-
-app.get('/api/hello', (_req, res) => {
-  res.json({ message: 'Hello from the backend' });
-});
+const PORT = Number(process.env.PORT) || 3000;
 
 app.listen(PORT, () => {
   console.log(`Backend running at http://localhost:${PORT}`);

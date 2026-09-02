@@ -67,6 +67,63 @@ describe('authentication lifecycle', () => {
       message: 'Authentication required',
     });
   });
+  test('rejects duplicate signup', async () => {
+    const credentials = {
+      email: 'duplicate@example.com',
+      password: 'password123',
+    };
+
+    await request(app).post('/api/auth/signup').send(credentials).expect(201);
+
+    const response = await request(app)
+      .post('/api/auth/signup')
+      .send(credentials)
+      .expect(409);
+
+    expect(response.body).toEqual({
+      message: 'An account with that email already exists',
+    });
+  });
+
+  test('rejects an incorrect password', async () => {
+    await request(app)
+      .post('/api/auth/signup')
+      .send({
+        email: 'login-test@example.com',
+        password: 'correct-password',
+      })
+      .expect(201);
+
+    const response = await request(app)
+      .post('/api/auth/login')
+      .send({
+        email: 'login-test@example.com',
+        password: 'wrong-password',
+      })
+      .expect(401);
+
+    expect(response.body).toEqual({
+      message: 'Invalid email or password',
+    });
+  });
+
+  test('protects project and session routes from logged-out users', async () => {
+    const projectsResponse = await request(app)
+      .get('/api/projects')
+      .expect(401);
+
+    expect(projectsResponse.body).toEqual({
+      message: 'Authentication required',
+    });
+
+    const sessionsResponse = await request(app)
+      .get('/api/sessions')
+      .expect(401);
+
+    expect(sessionsResponse.body).toEqual({
+      message: 'Authentication required',
+    });
+  });
 });
 
 describe('project ownership', () => {

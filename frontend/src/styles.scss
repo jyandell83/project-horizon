@@ -115,10 +115,26 @@ button {
   border: 1px solid var(--color-tertiary);
 }
 
+a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
 form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
 }
 
 label {
@@ -135,6 +151,7 @@ input {
   border-radius: 6px;
   background: white;
   font: inherit;
+  width: 100%;
 }
 
 input:focus {
@@ -147,7 +164,7 @@ input:focus {
   flex-direction: column;
   gap: 1rem;
 
-  padding: 1.5rem;
+  padding: 1rem 1.5rem;
 
   background: var(--color-surface);
   border: 1px solid rgba(47, 36, 27, 0.1);
@@ -155,6 +172,10 @@ input:focus {
   box-shadow: var(--shadow-sm);
 
   margin: 1rem;
+
+  &__title {
+    font-size: 1.5rem;
+  }
 }
 
 .button-primary {
@@ -250,10 +271,19 @@ input:focus {
   }
 }
 
-.error {
-  color: var(--color-danger);
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
+.form-field {
+  &__input {
+    &--error {
+      border-color: var(--color-danger);
+    }
+  }
+
+  &__error {
+    font-size: 0.875rem;
+    color: var(--color-danger);
+    height: 1.25rem;
+    line-height: 1.25rem;
+  }
 }
 
 /*Utilities put in own file eventually*/
@@ -272,4 +302,16 @@ input:focus {
 
 .align-items-start {
   align-items: start;
+}
+
+.p-1 {
+  padding: 1rem;
+}
+
+.px-1 {
+  padding-inline: 1rem;
+}
+
+.py-1 {
+  padding-block: 1rem;
 }

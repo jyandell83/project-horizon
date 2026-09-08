@@ -39,12 +39,6 @@ section {
   margin-top: 0.5rem;
 }
 
-.current-phase {
-  padding: 1.5rem;
-  border-radius: 12px;
-  background: #f6f0e4;
-}
-
 .current-phase__header {
   margin-bottom: 1.25rem;
 
@@ -101,4 +95,57 @@ section {
   margin-top: 3rem;
   padding-top: 1.5rem;
   border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.phase-actions {
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  background: var(--color-surface);
+}
+
+.phase-actions__title {
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+}
+
+.phase-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+
+  button {
+    min-height: 3rem;
+    padding: 0.75rem;
+    color: var(--color-text);
+    font: inherit;
+    font-weight: 600;
+    text-align: left;
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      transform 150ms ease;
+
+    &:hover {
+      background-color: var(--color-surface-raised);
+      border-color: var(--color-primary);
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--color-primary);
+      outline-offset: 3px;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+.phase-grid__cool-down {
+  grid-column: 1 / -1;
 }

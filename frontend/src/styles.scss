@@ -180,6 +180,10 @@ select:focus {
   }
 }
 
+.card > .card {
+  background: var(--color-surface-raised);
+}
+
 .button-primary {
   background: var(--color-primary);
   color: var(--color-surface);

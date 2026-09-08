@@ -145,11 +145,12 @@ export async function createSession(req: Request, res: Response) {
 
 const sessionPhaseTypes = [
   'warm-up',
-  'free-climb',
+  'climbing',
   'project',
   'strength',
   'cardio',
-  'other',
+  'flexibility',
+  'cool-down',
 ];
 
 export async function createSessionPhase(req: Request, res: Response) {

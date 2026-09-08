@@ -102,7 +102,7 @@ CREATE TABLE public.session_phases (
     "position" integer NOT NULL,
     CONSTRAINT session_phases_position_check CHECK (("position" >= 0)),
     CONSTRAINT session_phases_time_range_check CHECK (((ended_at IS NULL) OR (ended_at >= started_at))),
-    CONSTRAINT session_phases_type_check CHECK (type = ANY (ARRAY['warm-up'::text, 'climbing'::text, 'project'::text, 'strength'::text, 'cardio'::text, 'flexibility'::text, 'cool-down'::text]))
+    CONSTRAINT session_phases_type_check CHECK ((type = ANY (ARRAY['warm-up'::text, 'climbing'::text, 'project'::text, 'strength'::text, 'cardio'::text, 'flexibility'::text, 'cool-down'::text])))
 );
 
 
@@ -310,7 +310,7 @@ ALTER TABLE ONLY public.session_project_work
 --
 
 ALTER TABLE ONLY public.session_project_work
-    ADD CONSTRAINT session_project_work_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id);
+    ADD CONSTRAINT session_project_work_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id) ON DELETE CASCADE;
 
 
 --

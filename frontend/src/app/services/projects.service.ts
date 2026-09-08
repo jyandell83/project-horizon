@@ -86,18 +86,37 @@ export class ProjectsService {
   }
 
   updateAttempts(id: number, change: number) {
+    interface UpdateAttemptsResponse {
+      id: number;
+      attempts: number;
+    }
+
     return this.http
-      .patch<Project>(`/api/projects/${id}/attempts`, { change })
+      .patch<UpdateAttemptsResponse>(`/api/projects/${id}/attempts`, { change })
       .pipe(
-        tap((updatedProject) => {
+        tap(({ id, attempts }) => {
           this.projectsSignal.update((projects) =>
             projects.map((project) =>
-              project.id === id ? updatedProject : project,
+              project.id === id ? { ...project, attempts } : project,
             ),
           );
         }),
       );
   }
+
+  // updateAttempts(id: number, change: number) {
+  //   return this.http
+  //     .patch<Project>(`/api/projects/${id}/attempts`, { change })
+  //     .pipe(
+  //       tap((updatedProject) => {
+  //         this.projectsSignal.update((projects) =>
+  //           projects.map((project) =>
+  //             project.id === id ? updatedProject : project,
+  //           ),
+  //         );
+  //       }),
+  //     );
+  // }
 
   addNote(projectId: number, body: string) {
     return this.http

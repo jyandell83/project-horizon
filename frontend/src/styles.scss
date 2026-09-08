@@ -145,7 +145,8 @@ label {
   color: var(--color-text);
 }
 
-input {
+input,
+select {
   padding: 0.65rem 0.75rem;
   border: 1px solid var(--color-tertiary);
   border-radius: 6px;
@@ -154,7 +155,8 @@ input {
   width: 100%;
 }
 
-input:focus {
+input:focus,
+select:focus {
   outline: 2px solid var(--color-secondary);
   outline-offset: 2px;
 }
@@ -259,6 +261,9 @@ input:focus {
 .button-row {
   display: flex;
   justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+  gap: 1rem;
 }
 
 .page-header {

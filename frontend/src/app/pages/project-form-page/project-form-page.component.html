@@ -1,64 +1,98 @@
 <div class="card">
+  <h1 id="signup-heading" class="card__title">Add a project</h1>
   <form [formGroup]="projectForm" (ngSubmit)="saveProject()">
-    <label>
-      Project Name
-      <input type="text" formControlName="name" />
-    </label>
-    @if (
-      projectForm.controls.name.invalid && projectForm.controls.name.touched
-    ) {
-      <p class="error">Project name is required.</p>
-    }
+    <div class="form-field">
+      <label for="name">Name or Describe your project</label>
 
-    <label>
-      Grade
-      <select formControlName="grade">
-        <option value="VB">VB</option>
-        <option value="V0">V0</option>
-        <option value="V1">V1</option>
-        <option value="V2">V2</option>
-        <option value="V3">V3</option>
-        <option value="V4">V4</option>
-        <option value="V5">V5</option>
-        <option value="V6">V6</option>
-        <option value="V7">V7</option>
-        <option value="V8">V8</option>
-        <option value="V9">V9</option>
-        <option value="V10">V10</option>
-      </select>
-    </label>
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        inputmode=""
+        text
+        [class.form-field__input--error]="
+          projectForm.controls.name.invalid && projectForm.controls.name.touched
+        "
+      />
 
-    <label>
-      Location
-      <input type="text" formControlName="location" />
-    </label>
+      <div class="form-field__error">
+        @if (
+          projectForm.controls.name.touched && projectForm.controls.name.invalid
+        ) {
+          Enter a valid name or description for your project.
+        }
+      </div>
+    </div>
 
-    <label>
-      Environment
-      <select formControlName="environment">
-        <option value="gym">Gym</option>
-        <option value="outdoor">Outdoor</option>
-      </select>
-    </label>
+    <div class="form-field">
+      <label for="location">Location</label>
 
-    <label>
-      Status
-      <select formControlName="status">
-        <option value="active">Active</option>
-        <option value="retired">Retired</option>
-        <option value="sent">Sent</option>
-      </select>
-    </label>
+      <input
+        id="location"
+        type="text"
+        formControlName="location"
+        inputmode="text"
+        [class.form-field__input--error]="
+          projectForm.controls.location.invalid &&
+          projectForm.controls.location.touched
+        "
+      />
+
+      <div class="form-field__error">
+        @if (
+          projectForm.controls.location.touched &&
+          projectForm.controls.location.invalid
+        ) {
+          Enter a location for your project.
+        }
+      </div>
+    </div>
+
+    <div class="flex">
+      <div class="form-field">
+        <label for="grade">Grade</label>
+        <select formControlName="grade">
+          <option value="VB">VB</option>
+          <option value="V0">V0</option>
+          <option value="V1">V1</option>
+          <option value="V2">V2</option>
+          <option value="V3">V3</option>
+          <option value="V4">V4</option>
+          <option value="V5">V5</option>
+          <option value="V6">V6</option>
+          <option value="V7">V7</option>
+          <option value="V8">V8</option>
+          <option value="V9">V9</option>
+          <option value="V10">V10</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="environment">Gym or Outside?</label>
+        <select formControlName="environment">
+          <option value="gym">Gym</option>
+          <option value="outdoor">Outdoor</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="status">Status</label>
+        <select formControlName="status">
+          <option value="active">Active</option>
+          <option value="retired">Retired</option>
+          <option value="sent">Sent</option>
+        </select>
+      </div>
+    </div>
+
     <div class="button-row">
-      <button type="submit" [disabled]="projectForm.invalid">
-        Save Project
-      </button>
       <button
         type="button"
         class="button-danger"
         (click)="cancelAddingProject()"
       >
         Cancel
+      </button>
+      <button type="submit" [disabled]="projectForm.invalid">
+        Save Project
       </button>
     </div>
   </form>

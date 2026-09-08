@@ -1,12 +1,22 @@
 import { ProjectNote } from './project';
 
+// old data model for session phases
+// export type SessionPhaseType =
+//   | 'warm-up'
+//   | 'free-climb'
+//   | 'project'
+//   | 'strength'
+//   | 'cardio'
+//   | 'other';
+
 export type SessionPhaseType =
   | 'warm-up'
-  | 'free-climb'
+  | 'climbing'
   | 'project'
   | 'strength'
   | 'cardio'
-  | 'other';
+  | 'flexibility'
+  | 'cool-down';
 
 export interface ProjectWork {
   projectId: number;

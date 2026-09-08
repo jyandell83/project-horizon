@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
     "test": "DB_NAME=project_horizon_test NODE_ENV=test jest --runInBand",
     "test:watch": "DB_NAME=project_horizon_test NODE_ENV=test jest --watch --runInBand"

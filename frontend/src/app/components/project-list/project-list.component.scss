@@ -1,9 +1,13 @@
 .project-card__header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
+
+  > * {
+    margin-right: 1rem;
+  }
 
   h3 {
-    margin: 0;
     font-size: 1.25rem;
   }
 

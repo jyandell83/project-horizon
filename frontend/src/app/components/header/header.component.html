@@ -2,7 +2,7 @@
   <div class="header-content">
     <a class="brand" routerLink="/">
       <img
-        src="/images/logo/project-horizon-logo.webp"
+        src="/images/logo/project-horizon-logo-flat.png"
         alt="Project Horizon logo"
       />
     </a>
@@ -32,10 +32,11 @@
 
         <button
           type="button"
-          class="nav-link"
+          class="button-text button-primary"
           [disabled]="isLoggingOut()"
           (click)="logout()"
         >
+          <fa-icon [icon]="faRightFromBracket"></fa-icon>
           {{ isLoggingOut() ? "Logging out…" : "Log out" }}
         </button>
       } @else {

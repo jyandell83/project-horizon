@@ -173,8 +173,6 @@ select:focus {
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-sm);
 
-  margin: 1rem;
-
   &__title {
     font-size: 1.5rem;
   }
@@ -268,6 +266,11 @@ select:focus {
   margin-top: 1rem;
   padding-top: 0.5rem;
   gap: 1rem;
+}
+
+.page-container {
+  max-width: var(--max-content-width);
+  margin: 0 auto;
 }
 
 .page-header {

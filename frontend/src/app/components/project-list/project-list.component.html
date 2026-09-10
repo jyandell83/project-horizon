@@ -2,7 +2,7 @@
   <article class="card project-card">
     <div class="flex justify-between align-items-start">
       <div class="flex">
-        <div class="project-card__header flex-column">
+        <div class="project-card__header">
           <h3>{{ project.name }}</h3>
           <p>{{ project.location }}</p>
           <span class="project-badge">
@@ -36,7 +36,7 @@
         </div>
       </div>
 
-      <div class="button-row">
+      <div class="flex">
         <button
           class="button-text button-primary"
           [routerLink]="['/projects', project.id, 'edit']"

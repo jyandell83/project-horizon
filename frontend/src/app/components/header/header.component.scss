@@ -7,7 +7,7 @@
   max-width: var(--max-content-width);
   margin: 0 auto;
 
-  padding: 1rem 2rem;
+  padding: 0.5rem 0;
 
   display: flex;
   justify-content: space-between;
@@ -24,7 +24,7 @@
 }
 
 .brand img {
-  height: 7rem;
+  height: 4rem;
   width: auto;
 }
 
@@ -34,32 +34,29 @@
 }
 
 .nav-link {
-  color: var(--color-nav-text);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.4rem;
   text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s ease;
-  cursor: pointer;
-}
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
 
-.nav-link:hover {
-  color: var(--color-nav-text-hover);
-}
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
 
-.nav-link.active {
-  color: var(--color-nav-active);
+  &.active {
+    background: var(--color-surface-raised);
+    color: var(--color-nav-text);
+    font-weight: 600;
+  }
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
 }
 
 .nav-link {
   position: relative;
-}
-
-.nav-link.active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -0.4rem;
-  width: 100%;
-  height: 2px;
-  background: var(--color-secondary);
-  border-radius: 999px;
 }

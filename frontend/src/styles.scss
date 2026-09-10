@@ -327,3 +327,12 @@ select:focus {
 .py-1 {
   padding-block: 1rem;
 }
+
+.flex-column-mobile {
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+}

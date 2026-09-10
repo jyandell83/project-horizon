@@ -11,23 +11,21 @@
         </div>
       </div>
 
-      <div class="attempts">
-        <span class="attempts__label">Attempts</span>
+      <div class="attempt-counter">
+        <span class="attempt-counter__label">Attempts</span>
 
-        <div class="attempts__controls">
+        <div class="attempt-counter__control">
           <button
             type="button"
-            class="attempts__button"
             aria-label="Decrease attempts"
             (click)="updateAttempts(project.id, -1)"
           >
             −
           </button>
 
-          <span class="attempts__count">{{ project.attempts }}</span>
+          <span class="attempt-counter__value">{{ project.attempts }}</span>
           <button
             type="button"
-            class="attempts__button"
             aria-label="Increase attempts"
             (click)="updateAttempts(project.id, 1)"
           >

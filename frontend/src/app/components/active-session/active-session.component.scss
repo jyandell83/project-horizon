@@ -2,7 +2,6 @@
   display: block;
   max-width: 720px;
   margin: 0 auto;
-  padding: 1.5rem;
 }
 
 section {
@@ -148,4 +147,11 @@ section {
 
 .phase-grid__cool-down {
   grid-column: 1 / -1;
+}
+
+@media (max-width: 400px) {
+  .phase-grid {
+    display: flex;
+    flex-direction: column;
+  }
 }

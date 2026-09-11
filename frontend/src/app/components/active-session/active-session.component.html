@@ -65,26 +65,9 @@
           </div>
 
           @for (project of phase.projectWork; track project.projectId) {
-            <div class="project-work">
+            <div class="project-work flex-column-mobile">
               <strong>{{ getProjectName(project.projectId) }}</strong>
 
-              <!-- <div class="attempt-controls">
-                <span>{{ project.attempts }} attempts</span>
-
-                <button
-                  class="button-primary"
-                  (click)="updateProjectAttempts(project.projectId, 1)"
-                >
-                  +
-                </button>
-
-                <button
-                  class="button-primary"
-                  (click)="updateProjectAttempts(project.projectId, -1)"
-                >
-                  -
-                </button>
-              </div> -->
               <div class="attempt-counter">
                 <span class="attempt-counter__label">Session Attempts</span>
 
@@ -113,6 +96,7 @@
                 type="button"
                 (click)="markProjectSent(project.projectId)"
                 [disabled]="project.sent"
+                class="button-text"
               >
                 {{ project.sent ? "Sent!" : "Mark Sent" }}
               </button>
@@ -120,7 +104,7 @@
           }
 
           @if (phase.type === "project") {
-            <div class="add-project">
+            <div class="add-project flex-column-mobile">
               <select [(ngModel)]="selectedProjectId">
                 <option value="">Select Project</option>
 

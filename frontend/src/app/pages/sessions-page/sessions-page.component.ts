@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { SessionListComponent } from '../../components/session-list/session-list.component';
+
+import { SessionsService } from '../../services/sessions.service';
 
 @Component({
   selector: 'app-sessions-page',
@@ -10,4 +12,6 @@ import { SessionListComponent } from '../../components/session-list/session-list
   templateUrl: './sessions-page.component.html',
   styleUrl: './sessions-page.component.scss',
 })
-export class SessionsPageComponent {}
+export class SessionsPageComponent {
+  sessionsService = inject(SessionsService);
+}

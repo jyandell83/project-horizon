@@ -336,3 +336,69 @@ select:focus {
     flex-direction: row;
   }
 }
+
+.attempt-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+
+  &__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  &__control {
+    display: flex;
+    align-items: center;
+    border: 1px solid #8b908a;
+    border-radius: 6px;
+    overflow: hidden;
+
+    button,
+    span {
+      width: 44px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+    }
+
+    button {
+      border: 0;
+      background: transparent;
+      font-size: 1.25rem;
+      cursor: pointer;
+      cursor: pointer;
+      border-radius: initial;
+      transition:
+        background-color 120ms ease,
+        transform 60ms ease;
+
+      &:hover {
+        background-color: rgba(111, 127, 92, 0.15);
+      }
+
+      &:active {
+        background-color: rgba(111, 127, 92, 0.3);
+        transform: translateY(1px);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--color-secondary);
+        outline-offset: -3px;
+      }
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  &__value {
+    border-inline: 1px solid #8b908a;
+    font-weight: 700;
+  }
+}

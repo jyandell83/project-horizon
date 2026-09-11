@@ -68,7 +68,7 @@
             <div class="project-work">
               <strong>{{ getProjectName(project.projectId) }}</strong>
 
-              <div class="attempt-controls">
+              <!-- <div class="attempt-controls">
                 <span>{{ project.attempts }} attempts</span>
 
                 <button
@@ -84,6 +84,30 @@
                 >
                   -
                 </button>
+              </div> -->
+              <div class="attempt-counter">
+                <span class="attempt-counter__label">Session Attempts</span>
+
+                <div class="attempt-counter__control">
+                  <button
+                    type="button"
+                    aria-label="Decrease attempts"
+                    (click)="updateProjectAttempts(project.projectId, -1)"
+                  >
+                    −
+                  </button>
+
+                  <span class="attempt-counter__value">{{
+                    project.attempts
+                  }}</span>
+                  <button
+                    type="button"
+                    aria-label="Increase attempts"
+                    (click)="updateProjectAttempts(project.projectId, 1)"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
               <button
                 type="button"

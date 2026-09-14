@@ -202,22 +202,19 @@ export class SessionsService {
       });
   }
 
-  endSession(): void {
+  endSession() {
     const session = this.activeSessionSignal();
 
     if (!session) {
       return;
     }
 
-    this.http.post(`/api/sessions/${session.id}/end`, {}).subscribe({
-      next: () => {
+    return this.http.post(`/api/sessions/${session.id}/end`, {}).pipe(
+      tap(() => {
         this.loadSessions();
         this.projectsService.refreshProjects();
-      },
-      error: (error) => {
-        console.error('Failed to end session', error);
-      },
-    });
+      }),
+    );
   }
 
   deleteSession(id: string): void {

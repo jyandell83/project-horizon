@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { ActiveSessionComponent } from '../../components/active-session/active-session.component';
 import { SessionsService } from '../../services/sessions.service';
 import { SessionPhaseType } from '../../models/session';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sessions-active-page',
@@ -14,6 +15,8 @@ export class SessionsActivePageComponent {
   private readonly sessionsService = inject(SessionsService);
 
   readonly activeSession = this.sessionsService.activeSession;
+
+  router = inject(Router);
 
   startSession(location: string): void {
     this.sessionsService.startSession(location);
@@ -40,6 +43,13 @@ export class SessionsActivePageComponent {
   }
 
   endSession(): void {
-    this.sessionsService.endSession();
+    this.sessionsService.endSession()?.subscribe({
+      next: () => {
+        this.router.navigate(['/sessions']);
+      },
+      error: (err) => {
+        console.error('Failed to end session', err);
+      },
+    });
   }
 }

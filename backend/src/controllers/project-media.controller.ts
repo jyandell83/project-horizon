@@ -1,9 +1,10 @@
 import type { Request, Response } from 'express';
+import type { UploadApiResponse } from 'cloudinary';
 
 import { pool } from '../db.js';
 import cloudinary from '../config/cloudinary.js';
 
-function uploadBuffer(buffer: Buffer) {
+function uploadBuffer(buffer: Buffer): Promise<UploadApiResponse> {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
@@ -16,6 +17,11 @@ function uploadBuffer(buffer: Buffer) {
           return;
         }
 
+        if (!result) {
+          reject(new Error('Cloudinary returned no upload result'));
+          return;
+        }
+
         resolve(result);
       },
     );
@@ -25,6 +31,8 @@ function uploadBuffer(buffer: Buffer) {
 }
 
 export async function uploadProjectMedia(req: Request, res: Response) {
+  let uploadedPublicId: string | null = null;
+
   try {
     if (!req.file) {
       return res.status(400).json({
@@ -53,10 +61,7 @@ export async function uploadProjectMedia(req: Request, res: Response) {
 
     const cloudinaryResult = await uploadBuffer(req.file.buffer);
 
-    const result = cloudinaryResult as {
-      public_id: string;
-      secure_url: string;
-    };
+    uploadedPublicId = cloudinaryResult.public_id;
 
     const mediaResult = await pool.query(
       `
@@ -69,15 +74,85 @@ export async function uploadProjectMedia(req: Request, res: Response) {
         VALUES ($1, 'image', $2, $3)
         RETURNING *
       `,
-      [projectId, result.public_id, result.secure_url],
+      [projectId, cloudinaryResult.public_id, cloudinaryResult.secure_url],
     );
 
     return res.status(201).json(mediaResult.rows[0]);
   } catch (error) {
+    if (uploadedPublicId) {
+      try {
+        await cloudinary.uploader.destroy(uploadedPublicId);
+      } catch (cleanupError) {
+        console.error('Failed to clean up Cloudinary asset:', cleanupError);
+      }
+    }
+
     console.error('Failed to upload project image:', error);
 
     return res.status(500).json({
       message: 'Failed to upload image',
+    });
+  }
+}
+
+export async function deleteProjectMedia(req: Request, res: Response) {
+  try {
+    const projectId = Number(req.params.projectId);
+    const mediaId = Number(req.params.mediaId);
+    const userId = req.userId;
+
+    const mediaResult = await pool.query(
+      `
+        SELECT project_media.*
+        FROM project_media
+        JOIN projects
+          ON project_media.project_id = projects.id
+        WHERE project_media.id = $1
+        AND project_media.project_id = $2
+        AND projects.user_id = $3
+      `,
+      [mediaId, projectId, userId],
+    );
+
+    if (mediaResult.rows.length === 0) {
+      return res.status(404).json({
+        message: 'Media not found',
+      });
+    }
+
+    const media = mediaResult.rows[0];
+
+    const cloudinaryResult = await cloudinary.uploader.destroy(
+      media.cloudinary_public_id,
+      {
+        resource_type: 'image',
+        invalidate: true,
+      },
+    );
+
+    if (cloudinaryResult.result !== 'ok') {
+      console.error('Cloudinary failed to delete asset:', cloudinaryResult);
+
+      return res.status(500).json({
+        message: 'Failed to delete media from Cloudinary',
+      });
+    }
+
+    await pool.query(
+      `
+        DELETE FROM project_media
+        WHERE id = $1
+        AND project_id = $2
+      `,
+      [mediaId, projectId],
+    );
+
+    return res.status(204).send();
+  } catch (error) {
+    console.error('Failed to delete project media:', error);
+
+    return res.status(500).json({
+      message: 'Failed to delete media',
     });
   }
 }

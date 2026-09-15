@@ -15,7 +15,10 @@ import {
 } from '../controllers/projects.controller.js';
 
 import upload from '../middleware/upload.js';
-import { uploadProjectMedia } from '../controllers/project-media.controller.js';
+import {
+  uploadProjectMedia,
+  deleteProjectMedia,
+} from '../controllers/project-media.controller.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -27,6 +30,7 @@ router.post('/', createProject);
 router.put('/:id', updateProject);
 router.delete('/:id', deleteProject);
 router.post('/:id/media', upload.single('image'), uploadProjectMedia);
+router.delete('/:projectId/media/:mediaId', deleteProjectMedia);
 
 router.patch('/:id/attempts', updateProjectAttempts);
 

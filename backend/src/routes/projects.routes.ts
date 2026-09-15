@@ -14,6 +14,9 @@ import {
   deleteProjectNote,
 } from '../controllers/projects.controller.js';
 
+import upload from '../middleware/upload.js';
+import { uploadProjectMedia } from '../controllers/project-media.controller.js';
+
 const router = Router();
 router.use(requireAuth);
 
@@ -23,6 +26,7 @@ router.get('/:id', getProjectById);
 router.post('/', createProject);
 router.put('/:id', updateProject);
 router.delete('/:id', deleteProject);
+router.post('/:id/media', upload.single('image'), uploadProjectMedia);
 
 router.patch('/:id/attempts', updateProjectAttempts);
 

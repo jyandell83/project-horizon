@@ -93,6 +93,13 @@
       />
     </div>
 
+    @if (existingMedia.length > 0) {
+      <img
+        [src]="existingMedia[0].url"
+        [alt]="projectForm.controls.name.value"
+      />
+    }
+
     <div class="button-row">
       <button
         type="button"

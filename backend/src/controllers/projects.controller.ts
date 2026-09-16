@@ -3,36 +3,61 @@ import { pool } from '../db.js';
 
 export async function getProjects(req: Request, res: Response) {
   const userId = req.userId;
+
   const projectsResult = await pool.query(
     `
-    SELECT *
-    FROM projects
-    WHERE user_id = $1
-    ORDER BY id
-  `,
+      SELECT *
+      FROM projects
+      WHERE user_id = $1
+      ORDER BY id
+    `,
     [userId],
   );
 
   const notesResult = await pool.query(
     `
-    SELECT project_notes.*
-    FROM project_notes
-    JOIN projects
-      ON project_notes.project_id = projects.id
-    WHERE projects.user_id = $1
-    ORDER BY project_notes.created_at
-  `,
+      SELECT project_notes.*
+      FROM project_notes
+      JOIN projects
+        ON project_notes.project_id = projects.id
+      WHERE projects.user_id = $1
+      ORDER BY project_notes.created_at
+    `,
+    [userId],
+  );
+
+  const mediaResult = await pool.query(
+    `
+      SELECT project_media.*
+      FROM project_media
+      JOIN projects
+        ON project_media.project_id = projects.id
+      WHERE projects.user_id = $1
+      ORDER BY project_media.sort_order, project_media.created_at
+    `,
     [userId],
   );
 
   const projects = projectsResult.rows.map((project) => ({
     ...project,
+
     notes: notesResult.rows
       .filter((note) => note.project_id === project.id)
       .map((note) => ({
         id: note.id,
         body: note.body,
         date: note.created_at,
+      })),
+
+    media: mediaResult.rows
+      .filter((media) => media.project_id === project.id)
+      .map((media) => ({
+        id: media.id,
+        project_id: media.project_id,
+        media_type: media.media_type,
+        url: media.url,
+        sort_order: media.sort_order,
+        created_at: media.created_at,
       })),
   }));
 
@@ -249,6 +274,22 @@ export async function getProjectById(req: Request, res: Response) {
     [id, userId],
   );
 
+  const mediaResult = await pool.query(
+    `
+    SELECT
+      id,
+      project_id,
+      media_type,
+      url,
+      sort_order,
+      created_at
+    FROM project_media
+    WHERE project_id = $1
+    ORDER BY sort_order, created_at
+  `,
+    [id],
+  );
+
   const project = {
     ...projectResult.rows[0],
     notes: notesResult.rows.map((note) => ({
@@ -256,6 +297,7 @@ export async function getProjectById(req: Request, res: Response) {
       body: note.body,
       date: note.created_at,
     })),
+    media: mediaResult.rows,
   };
 
   res.json(project);

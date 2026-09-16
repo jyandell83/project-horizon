@@ -1,3 +1,5 @@
+import { ProjectMedia } from './project-media';
+
 export type ProjectStatus = 'active' | 'retired' | 'sent';
 export type ProjectEnvironment = 'gym' | 'outdoor';
 
@@ -17,4 +19,5 @@ export interface Project {
   status: ProjectStatus;
   attempts: number;
   notes: ProjectNote[];
+  media: ProjectMedia[];
 }

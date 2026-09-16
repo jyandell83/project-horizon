@@ -13,6 +13,8 @@ import { ProjectStatus } from '../../models/project';
 
 import { Router, ActivatedRoute } from '@angular/router';
 
+import { ProjectMedia } from '../../models/project-media';
+
 @Component({
   selector: 'app-project-form-page',
   standalone: true,
@@ -28,6 +30,7 @@ export class ProjectFormPageComponent {
   private projectsService = inject(ProjectsService);
   private route = inject(ActivatedRoute);
   selectedImage: File | null = null;
+  existingMedia: ProjectMedia[] = [];
 
   ngOnInit() {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -38,6 +41,8 @@ export class ProjectFormPageComponent {
 
       this.projectsService.getProject(this.projectId).subscribe({
         next: (project) => {
+          console.log('Loaded project:', project);
+          this.existingMedia = project.media;
           this.projectForm.patchValue(project);
         },
         error: (error) => {
@@ -105,6 +110,7 @@ export class ProjectFormPageComponent {
           status: 'active',
           attempts: 0,
           notes: [],
+          media: [],
         })
         .subscribe({
           next: (newProject) => {

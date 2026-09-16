@@ -212,10 +212,11 @@ ALTER TABLE ONLY public.projects
     ADD CONSTRAINT projects_pkey PRIMARY KEY (id);
 
     
-CREATE TABLE project_media (
+CREATE TABLE public.project_media (
   id SERIAL PRIMARY KEY,
+
   project_id INTEGER NOT NULL
-    REFERENCES projects(id)
+    REFERENCES public.projects(id)
     ON DELETE CASCADE,
 
   media_type VARCHAR(20) NOT NULL DEFAULT 'image'

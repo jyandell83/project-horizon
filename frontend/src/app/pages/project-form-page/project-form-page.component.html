@@ -82,6 +82,16 @@
         </select>
       </div>
     </div>
+    <div class="form-field">
+      <label for="project-image">Project photo</label>
+
+      <input
+        id="project-image"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        (change)="onImageSelected($event)"
+      />
+    </div>
 
     <div class="button-row">
       <button

@@ -4,6 +4,8 @@ import { AuthService } from './auth.service';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
 
+import { ProjectMedia } from '../models/project-media';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -104,19 +106,16 @@ export class ProjectsService {
       );
   }
 
-  // updateAttempts(id: number, change: number) {
-  //   return this.http
-  //     .patch<Project>(`/api/projects/${id}/attempts`, { change })
-  //     .pipe(
-  //       tap((updatedProject) => {
-  //         this.projectsSignal.update((projects) =>
-  //           projects.map((project) =>
-  //             project.id === id ? updatedProject : project,
-  //           ),
-  //         );
-  //       }),
-  //     );
-  // }
+  uploadMedia(projectId: number, file: File) {
+    const formData = new FormData();
+
+    formData.append('image', file);
+
+    return this.http.post<ProjectMedia>(
+      `/api/projects/${projectId}/media`,
+      formData,
+    );
+  }
 
   addNote(projectId: number, body: string) {
     return this.http

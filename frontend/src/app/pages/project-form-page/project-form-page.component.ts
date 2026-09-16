@@ -27,6 +27,7 @@ export class ProjectFormPageComponent {
   private fb = inject(FormBuilder);
   private projectsService = inject(ProjectsService);
   private route = inject(ActivatedRoute);
+  selectedImage: File | null = null;
 
   ngOnInit() {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -55,6 +56,18 @@ export class ProjectFormPageComponent {
     }),
     status: ['active' as ProjectStatus],
   });
+
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    const file = input.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    this.selectedImage = file;
+  }
 
   saveProject() {
     if (this.projectForm.invalid) {
@@ -96,7 +109,22 @@ export class ProjectFormPageComponent {
         .subscribe({
           next: (newProject) => {
             console.log('Saved project:', newProject);
-            this.router.navigate(['/projects']);
+
+            if (!this.selectedImage) {
+              this.router.navigate(['/projects']);
+              return;
+            }
+
+            this.projectsService
+              .uploadMedia(newProject.id, this.selectedImage)
+              .subscribe({
+                next: () => {
+                  this.router.navigate(['/projects']);
+                },
+                error: (error) => {
+                  console.error('Failed to upload project image:', error);
+                },
+              });
           },
           error: (error) => {
             console.error('Failed to create project:', error);

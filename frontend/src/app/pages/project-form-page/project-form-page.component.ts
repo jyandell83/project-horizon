@@ -125,6 +125,7 @@ export class ProjectFormPageComponent {
               .uploadMedia(newProject.id, this.selectedImage)
               .subscribe({
                 next: () => {
+                  this.projectsService.refreshProjects();
                   this.router.navigate(['/projects']);
                 },
                 error: (error) => {

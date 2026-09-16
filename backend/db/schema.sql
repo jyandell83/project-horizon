@@ -68,6 +68,21 @@ CREATE TABLE public.projects (
     user_id integer NOT NULL
 );
 
+CREATE TABLE project_media (
+  id SERIAL PRIMARY KEY,
+  project_id INTEGER NOT NULL
+    REFERENCES projects(id)
+    ON DELETE CASCADE,
+
+  media_type VARCHAR(20) NOT NULL DEFAULT 'image'
+    CHECK (media_type IN ('image', 'video')),
+
+  cloudinary_public_id TEXT NOT NULL,
+  url TEXT NOT NULL,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 --
 -- Name: projects_id_seq; Type: SEQUENCE; Schema: public; Owner: -

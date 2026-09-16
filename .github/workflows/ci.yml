@@ -35,6 +35,9 @@ jobs:
       DB_NAME: project_horizon_test
       NODE_ENV: test
       JWT_SECRET: test-only-jwt-secret
+      CLOUDINARY_CLOUD_NAME: test-cloud
+      CLOUDINARY_API_KEY: test-api-key
+      CLOUDINARY_API_SECRET: test-api-secret
 
     steps:
       - name: Check out repository

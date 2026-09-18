@@ -1,6 +1,8 @@
 import type { Request, Response } from 'express';
 import { pool } from '../db.js';
 
+import { destroyCloudinaryImage } from './project-media.controller.js';
+
 export async function getProjects(req: Request, res: Response) {
   const userId = req.userId;
 
@@ -115,18 +117,47 @@ export async function updateProject(req: Request, res: Response) {
 
 export async function deleteProject(req: Request, res: Response) {
   const id = Number(req.params.id);
-  const userId = (req as any).userId;
+  const userId = req.userId;
 
-  const result = await pool.query(
-    'DELETE FROM projects WHERE id = $1 AND user_id = $2 RETURNING *',
+  const projectResult = await pool.query(
+    `
+      SELECT id
+      FROM projects
+      WHERE id = $1
+      AND user_id = $2
+    `,
     [id, userId],
   );
 
-  if (result.rows.length === 0) {
-    return res.status(404).json({ message: 'Project not found' });
+  if (projectResult.rows.length === 0) {
+    return res.status(404).json({
+      message: 'Project not found',
+    });
   }
 
-  res.status(204).send();
+  const mediaResult = await pool.query(
+    `
+      SELECT cloudinary_public_id
+      FROM project_media
+      WHERE project_id = $1
+    `,
+    [id],
+  );
+
+  for (const media of mediaResult.rows) {
+    await destroyCloudinaryImage(media.cloudinary_public_id);
+  }
+
+  await pool.query(
+    `
+      DELETE FROM projects
+      WHERE id = $1
+      AND user_id = $2
+    `,
+    [id, userId],
+  );
+
+  return res.status(204).send();
 }
 
 export async function updateProjectAttempts(req: Request, res: Response) {

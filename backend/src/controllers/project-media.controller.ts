@@ -95,6 +95,17 @@ export async function uploadProjectMedia(req: Request, res: Response) {
   }
 }
 
+export async function destroyCloudinaryImage(publicId: string) {
+  const result = await cloudinary.uploader.destroy(publicId, {
+    resource_type: 'image',
+    invalidate: true,
+  });
+
+  if (result.result !== 'ok' && result.result !== 'not found') {
+    throw new Error('Failed to delete image from Cloudinary');
+  }
+}
+
 export async function deleteProjectMedia(req: Request, res: Response) {
   try {
     const projectId = Number(req.params.projectId);
@@ -122,21 +133,7 @@ export async function deleteProjectMedia(req: Request, res: Response) {
 
     const media = mediaResult.rows[0];
 
-    const cloudinaryResult = await cloudinary.uploader.destroy(
-      media.cloudinary_public_id,
-      {
-        resource_type: 'image',
-        invalidate: true,
-      },
-    );
-
-    if (cloudinaryResult.result !== 'ok') {
-      console.error('Cloudinary failed to delete asset:', cloudinaryResult);
-
-      return res.status(500).json({
-        message: 'Failed to delete media from Cloudinary',
-      });
-    }
+    await destroyCloudinaryImage(media.cloudinary_public_id);
 
     await pool.query(
       `

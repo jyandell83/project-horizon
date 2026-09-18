@@ -526,9 +526,9 @@ describe('project media', () => {
 
     const mediaId = mediaResult.rows[0].id;
 
-    jest.spyOn(cloudinary.uploader, 'destroy').mockResolvedValue({
-      result: 'not found',
-    } as any);
+    jest
+      .spyOn(cloudinary.uploader, 'destroy')
+      .mockRejectedValueOnce(new Error('Cloudinary delete failed'));
 
     await agent
       .delete(`/api/projects/${projectId}/media/${mediaId}`)

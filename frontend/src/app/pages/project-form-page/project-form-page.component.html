@@ -111,8 +111,12 @@
       >
         Cancel
       </button>
-      <button type="submit" [disabled]="projectForm.invalid">
-        Save Project
+      <button
+        type="submit"
+        [disabled]="projectForm.invalid"
+        [disabled]="isSaving"
+      >
+        {{ isSaving ? "Saving..." : "Save Project" }}
       </button>
     </div>
   </form>

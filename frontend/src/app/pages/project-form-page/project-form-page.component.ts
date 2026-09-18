@@ -24,6 +24,7 @@ import { ProjectMedia } from '../../models/project-media';
 })
 export class ProjectFormPageComponent {
   isEditing = false;
+  isSaving = false;
   projectId?: number;
   private router = inject(Router);
   private fb = inject(FormBuilder);
@@ -75,10 +76,16 @@ export class ProjectFormPageComponent {
   }
 
   saveProject() {
+    if (this.isSaving) {
+      return;
+    }
+
     if (this.projectForm.invalid) {
       this.projectForm.markAllAsTouched();
       return;
     }
+
+    this.isSaving = true;
 
     const formValue = this.projectForm.getRawValue();
 
@@ -101,6 +108,7 @@ export class ProjectFormPageComponent {
                     this.router.navigate(['/projects']);
                   },
                   error: (error) => {
+                    this.isSaving = false;
                     console.error('Failed to upload project image:', error);
                   },
                 });
@@ -140,11 +148,15 @@ export class ProjectFormPageComponent {
                   this.router.navigate(['/projects']);
                 },
                 error: (error) => {
+                  this.isSaving = false;
+
                   console.error('Failed to upload project image:', error);
                 },
               });
           },
           error: (error) => {
+            this.isSaving = false;
+
             console.error('Failed to create project:', error);
           },
         });

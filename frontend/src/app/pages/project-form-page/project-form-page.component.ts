@@ -92,12 +92,23 @@ export class ProjectFormPageComponent {
           status: formValue.status,
         })
         .subscribe({
-          next: (updatedProject) => {
-            console.log('Updated project:', updatedProject);
+          next: () => {
+            if (this.selectedImage && this.projectId) {
+              this.projectsService
+                .uploadMedia(this.projectId, this.selectedImage)
+                .subscribe({
+                  next: () => {
+                    this.router.navigate(['/projects']);
+                  },
+                  error: (error) => {
+                    console.error('Failed to upload project image:', error);
+                  },
+                });
+
+              return;
+            }
+
             this.router.navigate(['/projects']);
-          },
-          error: (error) => {
-            console.error('Failed to update project:', error);
           },
         });
     } else {
@@ -138,6 +149,30 @@ export class ProjectFormPageComponent {
           },
         });
     }
+  }
+
+  deleteImage(): void {
+    if (!this.projectId || !this.existingMedia.length) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      'Delete this image? This cannot be undone.',
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const mediaId = this.existingMedia[0].id;
+
+    this.projectsService.deleteMedia(this.projectId, mediaId).subscribe({
+      next: () => {
+        this.projectsService.removeMediaFromProject(this.projectId!, mediaId);
+
+        this.existingMedia = [];
+      },
+    });
   }
 
   cancelAddingProject(): void {

@@ -79,6 +79,7 @@ export class ProjectsService {
               ? {
                   ...updatedProject,
                   notes: project.notes,
+                  media: project.media,
                 }
               : project,
           ),
@@ -108,12 +109,40 @@ export class ProjectsService {
 
   uploadMedia(projectId: number, file: File) {
     const formData = new FormData();
-
     formData.append('image', file);
 
-    return this.http.post<ProjectMedia>(
-      `/api/projects/${projectId}/media`,
-      formData,
+    return this.http
+      .post<ProjectMedia>(`/api/projects/${projectId}/media`, formData)
+      .pipe(
+        tap((newMedia) => {
+          this.projectsSignal.update((projects) =>
+            projects.map((project) =>
+              project.id === projectId
+                ? {
+                    ...project,
+                    media: [...project.media, newMedia],
+                  }
+                : project,
+            ),
+          );
+        }),
+      );
+  }
+
+  deleteMedia(projectId: number, mediaId: number) {
+    return this.http.delete(`/api/projects/${projectId}/media/${mediaId}`);
+  }
+
+  removeMediaFromProject(projectId: number, mediaId: number): void {
+    this.projectsSignal.update((projects) =>
+      projects.map((project) =>
+        project.id === projectId
+          ? {
+              ...project,
+              media: project.media.filter((media) => media.id !== mediaId),
+            }
+          : project,
+      ),
     );
   }
 

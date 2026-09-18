@@ -65,7 +65,14 @@ export class ProjectsService {
   addProject(project: Omit<Project, 'id'>) {
     return this.http.post<Project>('/api/projects', project).pipe(
       tap((newProject) => {
-        this.projectsSignal.update((projects) => [...projects, newProject]);
+        this.projectsSignal.update((projects) => [
+          ...projects,
+          {
+            ...newProject,
+            notes: newProject.notes ?? [],
+            media: newProject.media ?? [],
+          },
+        ]);
       }),
     );
   }

@@ -1,59 +1,64 @@
 @for (project of projects(); track project.id) {
   <article class="card project-card">
-    <div class="flex justify-between align-items-start flex-column-mobile">
-      <div class="flex">
-        <div class="project-card__header">
+    <div>
+      <div>
+        <div class="flex justify-between">
           <h3>{{ project.name }}</h3>
-          <p>{{ project.location }}</p>
-          <span class="project-badge">
-            {{ project.grade }} &middot; {{ project.status }}
-          </span>
+          <div class="flex">
+            <button
+              class="button-text button-primary"
+              [routerLink]="['/projects', project.id, 'edit']"
+            >
+              <fa-icon [icon]="faEdit"></fa-icon>
+              Edit
+            </button>
+
+            <button
+              class="button-text button-danger"
+              (click)="deleteProject(project.id)"
+            >
+              <fa-icon [icon]="faTrash"></fa-icon>
+              Delete
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="attempt-counter">
-        <span class="attempt-counter__label">Attempts</span>
-
-        <div class="attempt-counter__control">
-          <button
-            type="button"
-            aria-label="Decrease attempts"
-            (click)="updateAttempts(project.id, -1)"
-          >
-            −
-          </button>
-
-          <span class="attempt-counter__value">{{ project.attempts }}</span>
-          <button
-            type="button"
-            aria-label="Increase attempts"
-            (click)="updateAttempts(project.id, 1)"
-          >
-            +
-          </button>
-        </div>
-      </div>
-
-      @if (project.media.length) {
-        <img [src]="project.media[0].url" [alt]="project.name" />
-      }
+      <p>
+        {{ project.location }} &middot; {{ project.grade }} &middot;
+        {{ project.status }}
+      </p>
 
       <div class="flex">
-        <button
-          class="button-text button-primary"
-          [routerLink]="['/projects', project.id, 'edit']"
-        >
-          <fa-icon [icon]="faEdit"></fa-icon>
-          Edit
-        </button>
+        <div>
+          @if (project.media.length) {
+            <img [src]="project.media[0].url" [alt]="project.name" />
+          }
+        </div>
+        <div>
+          <div class="attempt-counter">
+            <span class="attempt-counter__label">Attempts</span>
 
-        <button
-          class="button-text button-danger"
-          (click)="deleteProject(project.id)"
-        >
-          <fa-icon [icon]="faTrash"></fa-icon>
-          Delete
-        </button>
+            <div class="attempt-counter__control">
+              <button
+                type="button"
+                aria-label="Decrease attempts"
+                (click)="updateAttempts(project.id, -1)"
+              >
+                −
+              </button>
+
+              <span class="attempt-counter__value">{{ project.attempts }}</span>
+              <button
+                type="button"
+                aria-label="Increase attempts"
+                (click)="updateAttempts(project.id, 1)"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

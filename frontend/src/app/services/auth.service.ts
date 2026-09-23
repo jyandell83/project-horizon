@@ -63,4 +63,30 @@ export class AuthService {
     this.currentUserState.set(null);
     this.authCheckedState.set(true);
   }
+
+  verifyEmail(token: string) {
+    return this.http.post<{ message: string }>('/api/auth/verify-email', {
+      token,
+    });
+  }
+
+  resendVerificationEmail() {
+    return this.http.post<{ message: string }>(
+      '/api/auth/resend-verification',
+      {},
+    );
+  }
+
+  requestPasswordReset(email: string) {
+    return this.http.post<{ message: string }>('/api/auth/forgot-password', {
+      email,
+    });
+  }
+
+  resetPassword(token: string, password: string) {
+    return this.http.post<{ message: string }>('/api/auth/reset-password', {
+      token,
+      password,
+    });
+  }
 }

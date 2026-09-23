@@ -9,6 +9,9 @@ import { SessionsActivePageComponent } from './pages/sessions-active-page/sessio
 import { ProjectFormPageComponent } from './pages/project-form-page/project-form-page.component';
 import { SessionEditPageComponent } from './pages/session-edit-page/session-edit-page.component';
 import { SignupPageComponent } from './pages/signup-page/signup-page.component';
+import { ForgotPasswordPageComponent } from './pages/forgot-password-page/forgot-password-page.component';
+import { ResetPasswordPageComponent } from './pages/reset-password-page/reset-password-page.component';
+import { VerifyEmailPageComponent } from './pages/verify-email-page/verify-email-page.component';
 
 export const routes: Routes = [
   {
@@ -57,5 +60,17 @@ export const routes: Routes = [
     path: 'profile',
     component: ProfilePageComponent,
     canActivate: [authGuard],
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordPageComponent,
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordPageComponent,
+  },
+  {
+    path: 'verify-email',
+    component: VerifyEmailPageComponent,
   },
 ];

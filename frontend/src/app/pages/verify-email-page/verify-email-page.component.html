@@ -1,0 +1,29 @@
+<div class="card">
+  <section aria-labelledby="verify-email-heading">
+    <h1 id="verify-email-heading" class="card__title">Verify email</h1>
+
+    @if (isLoading()) {
+      <p>Verifying your email…</p>
+    }
+
+    @if (successMessage()) {
+      <p role="status">
+        {{ successMessage() }}
+      </p>
+
+      <p class="py-1">
+        <a routerLink="/projects">Continue to Project Horizon</a>
+      </p>
+    }
+
+    @if (errorMessage()) {
+      <p role="alert" class="form-field__error">
+        {{ errorMessage() }}
+      </p>
+
+      <p class="py-1">
+        <a routerLink="/login">Back to login</a>
+      </p>
+    }
+  </section>
+</div>

@@ -15,6 +15,14 @@ img {
   color: #fff;
 }
 
+.project-card {
+  margin-bottom: 1rem;
+
+  &__content {
+    margin-top: 1rem;
+  }
+}
+
 .project-card__notes {
   margin: 0;
   line-height: 1.6;
@@ -63,5 +71,18 @@ img {
 
     display: flex;
     gap: 0.2rem;
+  }
+}
+
+.add-note {
+  display: flex;
+  align-items: center;
+
+  button {
+    padding: 1rem;
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    margin-left: 1rem;
   }
 }

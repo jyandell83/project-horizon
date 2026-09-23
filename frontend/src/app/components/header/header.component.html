@@ -51,3 +51,25 @@
     </nav>
   </div>
 </header>
+
+@if (currentUser() && !currentUser()?.email_verified_at) {
+  <div class="verification-banner">
+    <span>
+      Verify your email so you can recover your account if you forget your
+      password.
+    </span>
+
+    <button
+      type="button"
+      class="button-text"
+      [disabled]="isResendingVerification()"
+      (click)="resendVerificationEmail()"
+    >
+      {{ isResendingVerification() ? "Sending…" : "Resend verification email" }}
+    </button>
+
+    @if (verificationMessage()) {
+      <span role="status">{{ verificationMessage() }}</span>
+    }
+  </div>
+}

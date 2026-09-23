@@ -21,6 +21,9 @@ export class HeaderComponent {
   readonly currentUser = this.authService.currentUser;
   readonly isLoggingOut = signal(false);
 
+  readonly isResendingVerification = signal(false);
+  readonly verificationMessage = signal<string | null>(null);
+
   faRightFromBracket = faRightFromBracket;
 
   logout() {
@@ -36,6 +39,29 @@ export class HeaderComponent {
       .subscribe({
         next: () => {
           this.router.navigate(['/login']);
+        },
+      });
+  }
+
+  resendVerificationEmail() {
+    this.isResendingVerification.set(true);
+    this.verificationMessage.set(null);
+
+    this.authService
+      .resendVerificationEmail()
+      .pipe(
+        finalize(() => {
+          this.isResendingVerification.set(false);
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          this.verificationMessage.set(response.message);
+        },
+        error: () => {
+          this.verificationMessage.set(
+            'Unable to resend verification email. Please try again.',
+          );
         },
       });
   }

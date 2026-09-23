@@ -1,1 +1,22 @@
-<p>profile-page works!</p>
+<div class="card">
+  <section aria-labelledby="account-heading">
+    <h1 id="account-heading" class="card__title">Account</h1>
+
+    @if (currentUser()) {
+      <div class="form-field">
+        <label>Email</label>
+        <p>{{ currentUser()?.email }}</p>
+      </div>
+
+      <div class="form-field">
+        <label>Email status</label>
+
+        @if (currentUser()?.email_verified_at) {
+          <p>Verified</p>
+        } @else {
+          <p>Not verified</p>
+        }
+      </div>
+    }
+  </section>
+</div>

@@ -6,7 +6,10 @@ import { consumeAccountToken } from '../services/account-token.service.js';
 
 import { createAccountToken } from '../services/account-token.service.js';
 
-import { sendVerificationEmail } from '../services/email.service.js';
+import {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} from '../services/email.service.js';
 
 const authCookieOptions: CookieOptions = {
   httpOnly: true,
@@ -265,6 +268,105 @@ export async function resendVerificationEmail(req: Request, res: Response) {
 
     return res.status(500).json({
       message: 'Failed to resend verification email',
+    });
+  }
+}
+
+export async function requestPasswordReset(req: Request, res: Response) {
+  try {
+    const { email } = req.body;
+
+    if (typeof email !== 'string' || !email.trim()) {
+      return res.status(400).json({
+        message: 'Email is required',
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const result = await pool.query(
+      `
+        SELECT id, email
+        FROM users
+        WHERE email = $1
+      `,
+      [normalizedEmail],
+    );
+
+    const user = result.rows[0];
+
+    if (user) {
+      try {
+        const resetToken = await createAccountToken({
+          userId: user.id,
+          type: 'password_reset',
+          expiresInMinutes: 60,
+        });
+
+        await sendPasswordResetEmail(user.email, resetToken);
+      } catch (error) {
+        console.error('Failed to send password reset email:', error);
+      }
+    }
+
+    return res.status(200).json({
+      message:
+        'If an account exists for that email, we sent a password reset link.',
+    });
+  } catch (error) {
+    console.error('Error requesting password reset:', error);
+
+    return res.status(500).json({
+      message: 'Failed to process password reset request',
+    });
+  }
+}
+
+export async function resetPassword(req: Request, res: Response) {
+  try {
+    const { token, password } = req.body;
+
+    if (typeof token !== 'string' || !token) {
+      return res.status(400).json({
+        message: 'Reset token is required',
+      });
+    }
+
+    if (typeof password !== 'string' || password.length < 8) {
+      return res.status(400).json({
+        message: 'Password must be at least 8 characters',
+      });
+    }
+
+    const accountToken = await consumeAccountToken(token, 'password_reset');
+
+    if (!accountToken) {
+      return res.status(400).json({
+        message: 'Password reset link is invalid or expired',
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    await pool.query(
+      `
+        UPDATE users
+        SET
+          password_hash = $1,
+          email_verified_at = COALESCE(email_verified_at, NOW())
+        WHERE id = $2
+      `,
+      [passwordHash, accountToken.user_id],
+    );
+
+    return res.status(200).json({
+      message: 'Password reset successfully',
+    });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+
+    return res.status(500).json({
+      message: 'Failed to reset password',
     });
   }
 }

@@ -2,6 +2,11 @@ import type { CookieOptions, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { pool } from '../db.js';
+import { consumeAccountToken } from '../services/account-token.service.js';
+
+import { createAccountToken } from '../services/account-token.service.js';
+
+import { sendVerificationEmail } from '../services/email.service.js';
 
 const authCookieOptions: CookieOptions = {
   httpOnly: true,
@@ -21,6 +26,7 @@ function setAuthCookie(res: Response, userId: number) {
 export async function signup(req: Request, res: Response) {
   try {
     const { email, password } = req.body;
+    const normalizedEmail = email.trim().toLowerCase();
 
     if (
       typeof email !== 'string' ||
@@ -47,10 +53,22 @@ export async function signup(req: Request, res: Response) {
         VALUES ($1, $2)
         RETURNING id, email, created_at
       `,
-      [email, passwordHash],
+      [normalizedEmail, passwordHash],
     );
 
     const user = result.rows[0];
+
+    try {
+      const verificationToken = await createAccountToken({
+        userId: user.id,
+        type: 'email_verification',
+        expiresInMinutes: 24 * 60,
+      });
+
+      await sendVerificationEmail(user.email, verificationToken);
+    } catch (error) {
+      console.error('Failed to send verification email:', error);
+    }
 
     setAuthCookie(res, user.id);
 
@@ -80,13 +98,15 @@ export async function login(req: Request, res: Response) {
       });
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+
     const result = await pool.query(
       `
-        SELECT id, email, password_hash
+        SELECT id, email, password_hash, email_verified_at, created_at
         FROM users
         WHERE email = $1
       `,
-      [email],
+      [normalizedEmail],
     );
 
     const user = result.rows[0];
@@ -110,6 +130,8 @@ export async function login(req: Request, res: Response) {
     return res.status(200).json({
       id: user.id,
       email: user.email,
+      email_verified_at: user.email_verified_at,
+      created_at: user.created_at,
     });
   } catch (error) {
     console.error('Error logging in:', error);
@@ -136,7 +158,7 @@ export async function getCurrentUser(req: Request, res: Response) {
 
     const result = await pool.query(
       `
-        SELECT id, email, created_at
+        SELECT id, email, email_verified_at, created_at
         FROM users
         WHERE id = $1
       `,
@@ -157,6 +179,92 @@ export async function getCurrentUser(req: Request, res: Response) {
 
     return res.status(500).json({
       message: 'Failed to get current user',
+    });
+  }
+}
+
+export async function verifyEmail(req: Request, res: Response) {
+  try {
+    const { token } = req.body;
+
+    if (typeof token !== 'string' || !token) {
+      return res.status(400).json({
+        message: 'Verification token is required',
+      });
+    }
+
+    const accountToken = await consumeAccountToken(token, 'email_verification');
+
+    if (!accountToken) {
+      return res.status(400).json({
+        message: 'Verification link is invalid or expired',
+      });
+    }
+
+    await pool.query(
+      `
+        UPDATE users
+        SET email_verified_at = NOW()
+        WHERE id = $1
+      `,
+      [accountToken.user_id],
+    );
+
+    return res.status(200).json({
+      message: 'Email verified successfully',
+    });
+  } catch (error) {
+    console.error('Error verifying email:', error);
+
+    return res.status(500).json({
+      message: 'Failed to verify email',
+    });
+  }
+}
+
+export async function resendVerificationEmail(req: Request, res: Response) {
+  try {
+    const userId = (req as any).userId;
+
+    const result = await pool.query(
+      `
+        SELECT id, email, email_verified_at
+        FROM users
+        WHERE id = $1
+      `,
+      [userId],
+    );
+
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found',
+      });
+    }
+
+    if (user.email_verified_at) {
+      return res.status(200).json({
+        message: 'Email is already verified',
+      });
+    }
+
+    const verificationToken = await createAccountToken({
+      userId: user.id,
+      type: 'email_verification',
+      expiresInMinutes: 24 * 60,
+    });
+
+    await sendVerificationEmail(user.email, verificationToken);
+
+    return res.status(200).json({
+      message: 'Verification email sent',
+    });
+  } catch (error) {
+    console.error('Error resending verification email:', error);
+
+    return res.status(500).json({
+      message: 'Failed to resend verification email',
     });
   }
 }

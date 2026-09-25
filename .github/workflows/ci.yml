@@ -38,6 +38,8 @@ jobs:
       CLOUDINARY_CLOUD_NAME: test-cloud
       CLOUDINARY_API_KEY: test-api-key
       CLOUDINARY_API_SECRET: test-api-secret
+      RESEND_API_KEY: re_test
+      APP_URL: http://localhost:4200
 
     steps:
       - name: Check out repository
@@ -56,7 +58,9 @@ jobs:
 
       - name: Create test database schema
         working-directory: backend
-        run: psql -d project_horizon_test -f db/schema.sql
+        run: |
+          psql -d project_horizon_test -f db/schema.sql
+          psql -d project_horizon_test -f db/auth-email.sql
 
       - name: Type-check backend
         working-directory: backend

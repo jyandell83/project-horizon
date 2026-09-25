@@ -52,10 +52,10 @@ export async function signup(req: Request, res: Response) {
 
     const result = await pool.query(
       `
-        INSERT INTO users (email, password_hash)
-        VALUES ($1, $2)
-        RETURNING id, email, created_at
-      `,
+    INSERT INTO users (email, password_hash)
+    VALUES ($1, $2)
+    RETURNING id, email, email_verified_at, created_at
+  `,
       [normalizedEmail, passwordHash],
     );
 

@@ -17,6 +17,8 @@ import {
   faCheck,
   faXmark,
   faPlus,
+  faEllipsis,
+  faLocationDot,
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -41,6 +43,9 @@ export class ProjectListComponent {
   faCheck = faCheck;
   faXmark = faXmark;
   faPlus = faPlus;
+
+  faEllipsis = faEllipsis;
+  faLocationDot = faLocationDot;
 
   updateAttempts(id: number, change: number): void {
     this.projectsService.updateAttempts(id, change).subscribe({

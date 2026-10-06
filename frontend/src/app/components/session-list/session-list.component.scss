@@ -116,26 +116,6 @@ $two-col: 900px;
     text-transform: capitalize;
   }
 
-  // Block type colour. The name is always written out next to it,
-  // so colour is never the only cue.
-  &__dot {
-    width: 0.625rem;
-    height: 0.625rem;
-    border-radius: 50%;
-    flex-shrink: 0;
-    background: var(--color-tertiary);
-
-    // &--warm-up {
-    //   background: var(--color-danger);
-    // }
-    // &--climbing {
-    //   background: var(--color-primary);
-    // }
-    // &--project {
-    //   background: var(--color-secondary);
-    // }
-  }
-
   &__time {
     font-size: 0.9375rem;
     color: var(--color-text-muted);

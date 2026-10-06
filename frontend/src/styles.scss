@@ -574,3 +574,37 @@ textarea:focus {
     font-variant-numeric: tabular-nums;
   }
 }
+
+.eyebrow {
+  display: block;
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.phase-dot {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: var(--color-tertiary); // strength, cardio, stretching, cool-down
+
+  &--lg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  &--warm-up {
+    background: var(--color-danger);
+  }
+  &--climbing {
+    background: var(--color-primary);
+  }
+  &--project {
+    background: var(--color-secondary);
+  }
+}

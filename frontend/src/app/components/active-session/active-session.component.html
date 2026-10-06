@@ -1,163 +1,245 @@
 @if (!session) {
-  <div class="card">
+  <!-- ─── Before the session starts ─── -->
+  <section class="start-session">
+    <h1 class="start-session__title">Start a session</h1>
     <label>
       Where are you working out today?
-      <input type="text" [(ngModel)]="location" required />
+      <input
+        type="text"
+        [(ngModel)]="location"
+        placeholder="e.g. The Post"
+        required
+        (keyup.enter)="location.trim() && startSession()"
+      />
     </label>
-
-    <div class="button-row">
-      <button
-        class="button-primary"
-        type="button"
-        (click)="startSession()"
-        [disabled]="!location.trim()"
-      >
-        Start Session
-      </button>
-    </div>
-  </div>
+    <button
+      class="button-primary start-session__button"
+      type="button"
+      (click)="startSession()"
+      [disabled]="!location.trim()"
+    >
+      <fa-icon [icon]="faPlay"></fa-icon>
+      Start session
+    </button>
+  </section>
 } @else {
-  <div class="card">
-    <header class="session-header">
-      <p>Session in progress at</p>
-      <h1>{{ session.location }}</h1>
+  <div class="active-session">
+    <!-- ─── Session bar ─── -->
+    <header class="session-bar">
+      <div class="session-bar__live">
+        <span class="session-bar__pulse"></span>
+        Session in progress
+      </div>
+      <h1 class="session-bar__title">{{ session.location }}</h1>
+      <p class="session-bar__meta">
+        Started {{ session.startedAt | date: "shortTime" }} ·
+        <span class="tabular">{{ sessionDuration() }}</span>
+      </p>
     </header>
 
-    <section class="session-history">
-      <h2>Phases</h2>
+    <!-- Lives top-right on desktop, bottom of the page on phones -->
+    <button class="end-session" type="button" (click)="endSession()">
+      <fa-icon [icon]="faStop"></fa-icon>
+      End session
+    </button>
 
-      @for (phase of session.phases; track phase.id) {
-        <div class="phase-summary">
-          <div class="phase-summary__header">
-            <strong>{{ phase.type }}</strong>
-
-            <span>
-              {{ phase.startedAt | date: "shortTime" }}
-              -
-              @if (phase.endedAt) {
-                {{ phase.endedAt | date: "shortTime" }}
-              } @else {
-                In progress
-              }
+    <!-- ─── Current phase ─── -->
+    @if (currentPhase; as phase) {
+      <section class="current-phase" aria-labelledby="current-phase-title">
+        <div class="current-phase__header">
+          <div>
+            <span class="eyebrow">Current phase</span>
+            <h2 class="current-phase__title" id="current-phase-title">
+              <span
+                class="phase-dot phase-dot--lg phase-dot--{{ phase.type }}"
+              ></span>
+              {{ phaseLabel(phase.type) }}
+            </h2>
+          </div>
+          <div class="current-phase__timer">
+            <span class="current-phase__elapsed">{{
+              elapsed(phase.startedAt)
+            }}</span>
+            <span class="current-phase__since">
+              since {{ phase.startedAt | date: "shortTime" }}
             </span>
           </div>
+        </div>
 
-          @if (phase.projectWork.length) {
+        @if (phase.projectWork.length || phase.type === "project") {
+          <div class="current-phase__body">
             @for (project of phase.projectWork; track project.projectId) {
-              <div class="phase-project">
-                {{ getProjectName(project.projectId) }}
-                <span>{{ project.attempts }} attempts</span>
+              <div class="project-work">
+                <div class="project-work__info">
+                  <div class="project-work__name">
+                    {{ getProjectName(project.projectId) }}
+                  </div>
+                  <div class="project-work__hint">Attempts this session</div>
+                </div>
+
+                <div class="project-work__controls">
+                  <div
+                    class="attempt-counter__control project-work__stepper"
+                    role="group"
+                    [attr.aria-label]="
+                      'Attempts on ' + getProjectName(project.projectId)
+                    "
+                  >
+                    <button
+                      type="button"
+                      aria-label="Decrease attempts"
+                      (click)="updateProjectAttempts(project.projectId, -1)"
+                    >
+                      −
+                    </button>
+                    <span class="attempt-counter__value">{{
+                      project.attempts
+                    }}</span>
+                    <button
+                      type="button"
+                      aria-label="Increase attempts"
+                      (click)="updateProjectAttempts(project.projectId, 1)"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  @if (project.sent) {
+                    <span class="project-work__sent">
+                      <fa-icon [icon]="faCheck"></fa-icon>
+                      Sent!
+                    </span>
+                  } @else {
+                    <button
+                      type="button"
+                      class="project-work__mark-sent"
+                      (click)="markProjectSent(project.projectId)"
+                    >
+                      <fa-icon [icon]="faCheck"></fa-icon>
+                      Mark sent
+                    </button>
+                  }
+                </div>
               </div>
             }
-          }
-        </div>
-      } @empty {
-        <p>No phases recorded yet.</p>
-      }
-    </section>
 
-    @for (phase of session.phases; track phase.id) {
-      @if (phase.endedAt === null) {
-        <section class="current-phase card">
-          <div class="current-phase__header">
-            <span class="eyebrow">Current phase</span>
-            <h2>{{ phase.type }}</h2>
-          </div>
-
-          @for (project of phase.projectWork; track project.projectId) {
-            <div class="project-work flex-column-mobile">
-              <strong>{{ getProjectName(project.projectId) }}</strong>
-
-              <div class="attempt-counter">
-                <span class="attempt-counter__label">Session Attempts</span>
-
-                <div class="attempt-counter__control">
+            @if (phase.type === "project") {
+              <div class="add-project">
+                <label for="add-project-select">Add a project</label>
+                <div class="add-project__row">
+                  <select
+                    id="add-project-select"
+                    [(ngModel)]="selectedProjectId"
+                  >
+                    <option value="">Choose a project…</option>
+                    @for (project of availableProjects; track project.id) {
+                      <option [ngValue]="project.id">{{ project.name }}</option>
+                    }
+                  </select>
                   <button
                     type="button"
-                    aria-label="Decrease attempts"
-                    (click)="updateProjectAttempts(project.projectId, -1)"
+                    class="button-secondary"
+                    [disabled]="!selectedProjectId"
+                    (click)="addProject()"
                   >
-                    −
-                  </button>
-
-                  <span class="attempt-counter__value">{{
-                    project.attempts
-                  }}</span>
-                  <button
-                    type="button"
-                    aria-label="Increase attempts"
-                    (click)="updateProjectAttempts(project.projectId, 1)"
-                  >
-                    +
+                    Add
                   </button>
                 </div>
               </div>
-              <button
-                type="button"
-                (click)="markProjectSent(project.projectId)"
-                [disabled]="project.sent"
-                class="button-text"
-              >
-                {{ project.sent ? "Sent!" : "Mark Sent" }}
-              </button>
-            </div>
-          }
-
-          @if (phase.type === "project") {
-            <div class="add-project flex-column-mobile">
-              <select [(ngModel)]="selectedProjectId">
-                <option value="">Select Project</option>
-
-                @for (project of availableProjects; track project.id) {
-                  <option [ngValue]="project.id">
-                    {{ project.name }}
-                  </option>
-                }
-              </select>
-
-              <button (click)="addProject()">Add Project</button>
-            </div>
-          }
-
-          <button class="button-danger" type="button" (click)="endPhase()">
-            End Phase
-          </button>
-        </section>
-      }
+            }
+          </div>
+        }
+      </section>
     }
 
-    <section class="phase-actions">
-      <h2 class="phase-actions__title">What’s next?</h2>
+    <!-- ─── Up next ─── -->
+    <section class="up-next" aria-labelledby="up-next-title">
+      <h2 class="up-next__title" id="up-next-title">
+        {{ currentPhase ? "Up next" : "Start a phase" }}
+      </h2>
+      @if (currentPhase) {
+        <p class="up-next__hint">
+          Picking one ends {{ phaseLabel(currentPhase.type) }} and starts it.
+        </p>
+      }
 
-      <div class="phase-grid">
-        <button type="button" (click)="startPhase('warm-up')">Warm-up</button>
-
-        <button type="button" (click)="startPhase('climbing')">Climbing</button>
-
-        <button type="button" (click)="startPhase('project')">Project</button>
-
-        <button type="button" (click)="startPhase('strength')">Strength</button>
-
-        <button type="button" (click)="startPhase('cardio')">Cardio</button>
-
-        <button type="button" (click)="startPhase('flexibility')">
-          Stretching
-        </button>
-
-        <button
-          type="button"
-          class="phase-grid__cool-down"
-          (click)="startPhase('cool-down')"
-        >
-          Cool-down
-        </button>
+      <div class="up-next__grid">
+        @for (option of phaseOptions; track option.type) {
+          @if (option.type !== currentPhase?.type) {
+            <button
+              type="button"
+              class="up-next__option"
+              (click)="startPhase(option.type)"
+            >
+              <span class="phase-dot phase-dot--{{ option.type }}"></span>
+              {{ option.label }}
+            </button>
+          }
+        }
       </div>
+
+      @if (currentPhase) {
+        <button type="button" class="up-next__end-phase" (click)="endPhase()">
+          End phase without starting another
+        </button>
+      }
     </section>
 
-    <div class="button-row">
-      <button class="button-danger" type="button" (click)="endSession()">
-        End Session
-      </button>
-    </div>
+    <!-- ─── So far today ─── -->
+    <aside class="so-far" aria-labelledby="so-far-title">
+      <h2 class="eyebrow" id="so-far-title">So far today</h2>
+
+      <dl class="so-far__stats">
+        <div class="so-far__stat">
+          <dt>Total</dt>
+          <dd>{{ sessionDuration() }}</dd>
+        </div>
+        <div class="so-far__stat">
+          <dt>Attempts</dt>
+          <dd>{{ totalAttempts }}</dd>
+        </div>
+        <div class="so-far__stat">
+          <dt>Sent</dt>
+          <dd>{{ sentCount }}</dd>
+        </div>
+      </dl>
+
+      <ol class="so-far__list">
+        @for (phase of session.phases; track phase.id) {
+          <li class="so-far__phase">
+            <div class="so-far__row">
+              <span class="so-far__name">
+                <span class="phase-dot phase-dot--{{ phase.type }}"></span>
+                {{ phaseLabel(phase.type) }}
+              </span>
+              @if (phase.endedAt) {
+                <span class="so-far__time">
+                  {{ phase.startedAt | date: "h:mm" }} –
+                  {{ phase.endedAt | date: "h:mm" }}
+                </span>
+              } @else {
+                <span class="chip chip--active">Now</span>
+              }
+            </div>
+
+            @if (phase.projectWork.length) {
+              <ul class="so-far__projects">
+                @for (project of phase.projectWork; track project.projectId) {
+                  <li>
+                    {{ getProjectName(project.projectId) }} ·
+                    {{ project.attempts }} att.
+                    @if (project.sent) {
+                      <span class="so-far__sent" aria-label="sent">✓</span>
+                    }
+                  </li>
+                }
+              </ul>
+            }
+          </li>
+        } @empty {
+          <li class="so-far__empty">No phases yet. Pick one to get going.</li>
+        }
+      </ol>
+    </aside>
   </div>
 }

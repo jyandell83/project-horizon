@@ -1,75 +1,114 @@
-<section class="sessions-page">
+<section class="session-list">
   @for (session of sessions(); track session.id) {
     <article class="session-card">
+      <!-- Header: location, date + time, duration, options menu -->
       <header class="session-card__header">
-        <div>
-          <h2>{{ session.location || "Unknown Location" }}</h2>
-          <p>{{ session.startedAt | date: "fullDate" }}</p>
+        <div class="session-card__info">
+          <div class="session-card__title-row">
+            <h2 class="session-card__title">
+              {{ session.location || "Unknown location" }}
+            </h2>
+            @if (session.endedAt) {
+              <span class="chip chip--dark">{{ getDuration(session) }}</span>
+            } @else {
+              <span class="chip chip--active">In progress</span>
+            }
+          </div>
+
+          <div class="session-card__meta">
+            <span class="session-card__meta-item">
+              <fa-icon [icon]="faCalendar"></fa-icon>
+              {{ session.startedAt | date: "EEE, MMM d" }}
+            </span>
+            <span class="session-card__meta-item">
+              <fa-icon [icon]="faClock"></fa-icon>
+              {{ session.startedAt | date: "shortTime" }}
+              @if (session.endedAt) {
+                – {{ session.endedAt | date: "shortTime" }}
+              }
+            </span>
+            @if (session.environment) {
+              <span class="chip">{{ session.environment }}</span>
+            }
+          </div>
         </div>
 
-        @if (session.environment) {
-          <span>{{ session.environment }}</span>
-        }
+        <details class="dropdown session-card__menu">
+          <summary class="button-icon" aria-label="Session options">
+            <fa-icon [icon]="faEllipsis"></fa-icon>
+          </summary>
+          <div class="dropdown__panel">
+            <button
+              type="button"
+              class="dropdown__item"
+              [routerLink]="['/sessions', session.id, 'edit']"
+            >
+              <fa-icon [icon]="faEdit"></fa-icon>
+              Edit session
+            </button>
+            <button
+              type="button"
+              class="dropdown__item dropdown__item--danger"
+              (click)="deleteSession(session.id)"
+            >
+              <fa-icon [icon]="faTrash"></fa-icon>
+              Delete session
+            </button>
+          </div>
+        </details>
       </header>
 
-      <div class="session-card__times">
-        <p>
-          <strong>Start:</strong>
-          {{ session.startedAt | date: "shortTime" }}
-        </p>
+      <!-- Workout blocks -->
+      @if (session.phases.length) {
+        <ul class="session-phases" aria-label="Workout blocks">
+          @for (phase of session.phases; track phase.id) {
+            <li class="phase">
+              <div class="phase__row">
+                <span class="phase__name">
+                  <span class="phase__dot phase__dot--{{ phase.type }}"></span>
+                  {{ phase.type }}
+                </span>
+                <span class="phase__time">
+                  {{ phase.startedAt | date: "shortTime" }} –
+                  {{ phase.endedAt | date: "shortTime" }}
+                </span>
+              </div>
 
-        <p>
-          <strong>End:</strong>
-          {{ session.endedAt | date: "shortTime" }}
-        </p>
-      </div>
-
-      <h3>Workout Blocks</h3>
-
-      <ul class="session-phases">
-        @for (phase of session.phases; track phase.id) {
-          <li>
-            <strong>{{ phase.type }}</strong>
-
-            <div>
-              {{ phase.startedAt | date: "shortTime" }} -
-              {{ phase.endedAt | date: "shortTime" }}
-            </div>
-
-            <div>
-              @if (phase.type === "project") {
-                @for (project of phase.projectWork; track project.projectId) {
-                  <div>
-                    {{ getProjectName(project.projectId) }} -
-                    {{ project.attempts }} attempts
-                  </div>
-                }
+              @if (phase.type === "project" && phase.projectWork.length) {
+                <ul class="phase__projects">
+                  @for (project of phase.projectWork; track project.projectId) {
+                    <li class="phase__project">
+                      <span class="phase__project-name">
+                        {{ getProjectName(project.projectId) }}
+                      </span>
+                      <span class="phase__attempts">
+                        <strong>{{ project.attempts }}</strong>
+                        {{ project.attempts === 1 ? "attempt" : "attempts" }}
+                      </span>
+                    </li>
+                  }
+                </ul>
               }
-            </div>
-          </li>
-        }
-      </ul>
-
-      @if (session.notes.length) {
-        <h3>Notes</h3>
-
-        <ul class="session-notes">
-          @for (note of session.notes; track $index) {
-            <li>{{ note }}</li>
+            </li>
           }
         </ul>
       }
-      <div class="button-row">
-        <button class="button-danger" (click)="deleteSession(session.id)">
-          Delete Session
-        </button>
-        <button
-          class="button-secondary"
-          [routerLink]="['/sessions', session.id, 'edit']"
-        >
-          Edit
-        </button>
-      </div>
+
+      <!-- Session notes -->
+      @if (session.notes.length) {
+        <div class="session-notes">
+          <h3 class="session-notes__label">Notes</h3>
+          <ul class="session-notes__list">
+            @for (note of session.notes; track $index) {
+              <li>{{ note }}</li>
+            }
+          </ul>
+        </div>
+      }
     </article>
+  } @empty {
+    <p class="session-list__empty">
+      No sessions yet. Hit Start session next time you're at the gym.
+    </p>
   }
 </section>

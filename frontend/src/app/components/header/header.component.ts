@@ -5,7 +5,10 @@ import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import {
+  faRightFromBracket,
+  faEnvelope,
+} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-header',
@@ -25,6 +28,7 @@ export class HeaderComponent {
   readonly verificationMessage = signal<string | null>(null);
 
   faRightFromBracket = faRightFromBracket;
+  faEnvelope = faEnvelope;
 
   logout() {
     this.isLoggingOut.set(true);

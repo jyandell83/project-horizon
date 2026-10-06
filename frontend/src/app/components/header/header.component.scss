@@ -60,3 +60,70 @@
 .nav-link {
   position: relative;
 }
+
+.verification-banner {
+  // Same outer spacing as <main>, so the inner box lines up with page content
+  padding: 1rem 1rem 0;
+
+  &__inner {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem 0.875rem;
+    max-width: var(--max-content-width);
+    margin: 0 auto;
+    padding: 0.75rem 0.75rem 0.75rem 1rem;
+    background: var(--color-secondary-tint);
+    border: 1px solid var(--color-secondary-border);
+    border-radius: var(--border-radius-md);
+
+    // Phone: icon + text on top, full-width button underneath
+    @media (max-width: 640px) {
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: start;
+      padding: 0.875rem;
+    }
+  }
+
+  &__icon {
+    color: var(--color-secondary-dark);
+    font-size: 1.125rem;
+
+    @media (max-width: 640px) {
+      margin-top: 0.125rem;
+    }
+  }
+
+  &__text p {
+    font-size: 0.9375rem;
+    line-height: 1.4;
+  }
+
+  &__text strong {
+    font-weight: 600;
+  }
+
+  &__status {
+    margin-top: 0.25rem;
+    font-weight: 600;
+    color: var(--color-secondary-dark);
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__button {
+    min-height: 2.5rem;
+    padding: 0 0.875rem;
+    background: var(--color-surface);
+    font-size: 0.875rem;
+    white-space: nowrap;
+
+    @media (max-width: 640px) {
+      grid-column: 1 / -1;
+      width: 100%;
+      min-height: var(--tap);
+    }
+  }
+}

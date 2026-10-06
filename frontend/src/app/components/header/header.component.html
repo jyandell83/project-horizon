@@ -54,22 +54,28 @@
 
 @if (currentUser() && !currentUser()?.email_verified_at) {
   <div class="verification-banner">
-    <span>
-      Verify your email so you can recover your account if you forget your
-      password.
-    </span>
+    <div class="verification-banner__inner">
+      <fa-icon class="verification-banner__icon" [icon]="faEnvelope"></fa-icon>
 
-    <button
-      type="button"
-      class="button-text"
-      [disabled]="isResendingVerification()"
-      (click)="resendVerificationEmail()"
-    >
-      {{ isResendingVerification() ? "Sending…" : "Resend verification email" }}
-    </button>
+      <div class="verification-banner__text">
+        <p>
+          <strong>Verify your email</strong> so you can recover your account if
+          you forget your password.
+        </p>
+        <!-- Always rendered so screen readers announce the message when it appears -->
+        <p class="verification-banner__status" role="status">
+          {{ verificationMessage() }}
+        </p>
+      </div>
 
-    @if (verificationMessage()) {
-      <span role="status">{{ verificationMessage() }}</span>
-    }
+      <button
+        type="button"
+        class="button-secondary verification-banner__button"
+        [disabled]="isResendingVerification()"
+        (click)="resendVerificationEmail()"
+      >
+        {{ isResendingVerification() ? "Sending…" : "Resend email" }}
+      </button>
+    </div>
   </div>
 }

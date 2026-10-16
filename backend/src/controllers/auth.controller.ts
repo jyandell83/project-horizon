@@ -15,12 +15,12 @@ const authCookieOptions: CookieOptions = {
   httpOnly: true,
   sameSite: 'lax',
   secure: process.env.NODE_ENV === 'production',
-  maxAge: 60 * 60 * 1000,
+  maxAge: 3 * 60 * 60 * 1000,
 };
 
 function setAuthCookie(res: Response, userId: number) {
   const token = jwt.sign({ userId }, process.env.JWT_SECRET!, {
-    expiresIn: '1h',
+    expiresIn: '3h',
   });
 
   res.cookie('token', token, authCookieOptions);
